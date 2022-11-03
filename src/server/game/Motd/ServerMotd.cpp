@@ -31,7 +31,7 @@ namespace
 
 void Motd::SetMotd(std::string motd)
 {
-    motd = "Welcome to Argast-Servers!";
+    motd = "Welcome to Argast-Servers!!";
 
         // OLD MOTD HERE
 
