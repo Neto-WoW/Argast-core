@@ -762,11 +762,7 @@ void Transmogrification::LoadConfig(bool reload)
 #endif
 
     EnableTransmogInfo = sConfigMgr->GetOption<bool>("Transmogrification.EnableTransmogInfo", true);
-
-    if (GetLocaleByName("ruRU"))
-        TransmogNpcText = uint32(sConfigMgr->GetOption<uint32>("Transmogrification.TransmogNpcText", 601085));
-    else
-        TransmogNpcText = uint32(sConfigMgr->GetOption<uint32>("Transmogrification.TransmogNpcText", 601083));
+    TransmogNpcText = uint32(sConfigMgr->GetOption<uint32>("Transmogrification.TransmogNpcText", 601083));
 
     std::istringstream issAllowed(sConfigMgr->GetOption<std::string>("Transmogrification.Allowed", ""));
     std::istringstream issNotAllowed(sConfigMgr->GetOption<std::string>("Transmogrification.NotAllowed", ""));
@@ -851,7 +847,10 @@ bool Transmogrification::GetEnableTransmogInfo() const
 }
 uint32 Transmogrification::GetTransmogNpcText() const
 {
-    return TransmogNpcText;
+    if (GetLocaleByName("LOCALE_ruRU"))
+        return 601085;
+    else
+        return TransmogNpcText;
 }
 bool Transmogrification::GetEnableSetInfo() const
 {
