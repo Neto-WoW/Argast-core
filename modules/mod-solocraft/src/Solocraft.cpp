@@ -36,6 +36,8 @@ float D649H10 = 1.0;
 float D649H25 = 1.0;
 float D631H10 = 1.0;
 float D631H25 = 1.0;
+float D724H10 = 1.0;
+float D724H25 = 1.0;
 
 class SolocraftConfig : public WorldScript
 {
@@ -313,6 +315,8 @@ public:
         // Argast Additions
         D631H10 = sConfigMgr->GetOption<float>("Solocraft.IcecrownCitadelH10", 10.0);                      // Icecrown Citadel 10 Heroic
         D631H25 = sConfigMgr->GetOption<float>("Solocraft.IcecrownCitadelH25", 25.0);                      // Icecrown Citadel 25 Heroic
+        D724H10 = sConfigMgr->GetOption<float>("Solocraft.ChamberOfAspectsRedH10", 10.0);                  // The Ruby Sanctum 10 Heroic
+        D724H25 = sConfigMgr->GetOption<float>("Solocraft.ChamberOfAspectsRedH25", 25.0);                // The Ruby Sanctum 25 Heroic
 
     }
 };
@@ -402,6 +406,9 @@ private:
                     case 631:
                         return D631H25;  //Heroic 25 Icecrown
                         break;
+                    case 724:
+                        return D724H25; // The Ruby Sanctum 25 Heroic
+                        break;
                     }
                 }
 				else if(diff_Multiplier_Heroics.find(map->GetId()) == diff_Multiplier_Heroics.end()){		
@@ -425,6 +432,9 @@ private:
                     break;
                 case 631:
                     return D631H10;  //Heroic 10 Icecrown
+                    break;
+                case 724:
+                    return D724H10; // The Ruby Sanctum 10 Heroic
                     break;
                 }
 
