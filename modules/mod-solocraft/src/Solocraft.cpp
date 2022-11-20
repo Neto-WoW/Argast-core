@@ -34,6 +34,8 @@ float D25 = 1.0;
 float D40 = 1.0;
 float D649H10 = 1.0;
 float D649H25 = 1.0;
+float D631H10 = 1.0;
+float D631H25 = 1.0;
 
 class SolocraftConfig : public WorldScript
 {
@@ -308,6 +310,10 @@ public:
 		D649H10 = sConfigMgr->GetOption<float>("Solocraft.ArgentTournamentRaidH10", 10.0);  //Trial of the Crusader 10 Heroic
 		D649H25 = sConfigMgr->GetOption<float>("Solocraft.ArgentTournamentRaidH25", 25.0);  //Trial of the Crusader 25 Heroic
 
+        // Argast Additions
+        D631H10 = sConfigMgr->GetOption<float>("Solocraft.IcecrownCitadelH10", 10.0);                      // Icecrown Citadel 10 Heroic
+        D631H25 = sConfigMgr->GetOption<float>("Solocraft.IcecrownCitadelH25", 25.0);                      // Icecrown Citadel 25 Heroic
+
     }
 };
 
@@ -379,9 +385,25 @@ private:
 			//WOTLK 25 Man raids
             if (map->Is25ManRaid()) 
 			{
-				if (map->IsHeroic() && map->GetId() == 649) {
-					return D649H25;  //Heroic Grand Trial of the Crusader
-				}
+				//if (map->IsHeroic() && map->GetId() == 649) {
+				//	return D649H25;  //Heroic Grand Trial of the Crusader
+				//}
+    //            else if (map->IsHeroic() && map->GetId() == 631) {
+    //                return D631H10;  //Heroic 10 Icecrown
+    //            }
+
+                if (map->IsHeroic())
+                {
+                    switch (map->GetId())
+                    {
+                    case 649:
+                        return D649H25;  //Heroic Grand Trial of the Crusader
+                        break;
+                    case 631:
+                        return D631H25;  //Heroic 25 Icecrown
+                        break;
+                    }
+                }
 				else if(diff_Multiplier_Heroics.find(map->GetId()) == diff_Multiplier_Heroics.end()){		
 					return D25; //map not found returns the catch all value    
 				}
@@ -392,10 +414,21 @@ private:
 			if (map->IsHeroic()) 
 			{
 				//WOTLK 10 Man Heroic
-				if (map->GetId() == 649) {
-					return D649H10;
-				}
-				else if(diff_Multiplier_Heroics.find(map->GetId()) == diff_Multiplier_Heroics.end()){		
+				//if (map->GetId() == 649) {
+				//	return D649H10;
+				//}
+
+                switch (map->GetId())
+                {
+                case 649:
+                    return D649H10;  //Heroic Grand Trial of the Crusader 10
+                    break;
+                case 631:
+                    return D631H10;  //Heroic 10 Icecrown
+                    break;
+                }
+
+				if (diff_Multiplier_Heroics.find(map->GetId()) == diff_Multiplier_Heroics.end()){		
 					return D10; //map not found returns the catch all value    
 				}
 				else
@@ -574,42 +607,42 @@ private:
 				}				
 
 				////Announcements
-				//if (difficulty > 0)
-				//{
-				//	// Announce to player - Buff
-				//	if (!SolocraftXPEnabled)
-				//	{
-				//		ss << "|cffFF0000[SoloCraft] |cffFF8000" << player->GetName() << " entered %s  - Difficulty Offset: %0.2f. Spellpower Bonus: %i. Class Balance Weight: %i.  XP Gain: |cffFF0000Disabled";
-				//		ChatHandler(player->GetSession()).PSendSysMessage(ss.str().c_str(), map->GetMapName(), difficulty, SpellPowerBonus, classBalance);						
-				//	}
-				//	else
-				//	{
-				//		if (!SolocraftXPBalEnabled)
-				//		{
-				//			ss << "|cffFF0000[SoloCraft] |cffFF8000" << player->GetName() << " entered %s  - Difficulty Offset: %0.2f. Spellpower Bonus: %i. Class Balance Weight: %i.  XP Balancing: |cffFF0000Disabled";
-				//			ChatHandler(player->GetSession()).PSendSysMessage(ss.str().c_str(), map->GetMapName(), difficulty, SpellPowerBonus, classBalance);
-				//		}
-				//		else
-				//		{
-				//			ss << "|cffFF0000[SoloCraft] |cffFF8000" << player->GetName() << " entered %s  - Difficulty Offset: %0.2f. Spellpower Bonus: %i. Class Balance Weight: %i.  XP Balancing: |cff4CFF00Enabled";
-				//			ChatHandler(player->GetSession()).PSendSysMessage(ss.str().c_str(), map->GetMapName(), difficulty, SpellPowerBonus, classBalance);
-				//		}
-				//	}
-				//}
-				//else
-				//{
-				//	// Announce to player - Debuff
-				//	if (!SolocraftXPBalEnabled && SolocraftXPEnabled)
-				//	{
-				//		ss << "|cffFF0000[SoloCraft] |cffFF8000" << player->GetName() << " entered %s  - |cffFF0000BE ADVISED - You have been debuffed by offset: %0.2f with a Class Balance Weight: %i. |cffFF8000 A group member already inside has the dungeon's full buff offset.  No Spellpower buff will be applied to spell casters.  ALL group members must exit the dungeon and re-enter to receive a balanced offset.";
-				//		ChatHandler(player->GetSession()).PSendSysMessage(ss.str().c_str(), map->GetMapName(), difficulty, classBalance);
-				//	}
-				//	else
-				//	{
-				//		ss << "|cffFF0000[SoloCraft] |cffFF8000" << player->GetName() << " entered %s  - |cffFF0000BE ADVISED - You have been debuffed by offset: %0.2f with a Class Balance Weight: %i and no XP will be awarded. |cffFF8000 A group member already inside has the dungeon's full buff offset.  No Spellpower buff will be applied to spell casters.  ALL group members must exit the dungeon and re-enter to receive a balanced offset.";
-				//		ChatHandler(player->GetSession()).PSendSysMessage(ss.str().c_str(), map->GetMapName(), difficulty, classBalance);
-				//	}
-				//}
+				if (difficulty > 0)
+				{
+					// Announce to player - Buff
+					if (!SolocraftXPEnabled)
+					{
+						ss << "|cffFF0000[SoloCraft] |cffFF8000" << player->GetName() << " entered %s  - Difficulty Offset: %0.2f. Spellpower Bonus: %i. Class Balance Weight: %i.  XP Gain: |cffFF0000Disabled";
+						ChatHandler(player->GetSession()).PSendSysMessage(ss.str().c_str(), map->GetMapName(), difficulty, SpellPowerBonus, classBalance);						
+					}
+					else
+					{
+						if (!SolocraftXPBalEnabled)
+						{
+							ss << "|cffFF0000[SoloCraft] |cffFF8000" << player->GetName() << " entered %s  - Difficulty Offset: %0.2f. Spellpower Bonus: %i. Class Balance Weight: %i.  XP Balancing: |cffFF0000Disabled";
+							ChatHandler(player->GetSession()).PSendSysMessage(ss.str().c_str(), map->GetMapName(), difficulty, SpellPowerBonus, classBalance);
+						}
+						else
+						{
+							ss << "|cffFF0000[SoloCraft] |cffFF8000" << player->GetName() << " entered %s  - Difficulty Offset: %0.2f. Spellpower Bonus: %i. Class Balance Weight: %i.  XP Balancing: |cff4CFF00Enabled";
+							ChatHandler(player->GetSession()).PSendSysMessage(ss.str().c_str(), map->GetMapName(), difficulty, SpellPowerBonus, classBalance);
+						}
+					}
+				}
+				else
+				{
+					// Announce to player - Debuff
+					if (!SolocraftXPBalEnabled && SolocraftXPEnabled)
+					{
+						ss << "|cffFF0000[SoloCraft] |cffFF8000" << player->GetName() << " entered %s  - |cffFF0000BE ADVISED - You have been debuffed by offset: %0.2f with a Class Balance Weight: %i. |cffFF8000 A group member already inside has the dungeon's full buff offset.  No Spellpower buff will be applied to spell casters.  ALL group members must exit the dungeon and re-enter to receive a balanced offset.";
+						ChatHandler(player->GetSession()).PSendSysMessage(ss.str().c_str(), map->GetMapName(), difficulty, classBalance);
+					}
+					else
+					{
+						ss << "|cffFF0000[SoloCraft] |cffFF8000" << player->GetName() << " entered %s  - |cffFF0000BE ADVISED - You have been debuffed by offset: %0.2f with a Class Balance Weight: %i and no XP will be awarded. |cffFF8000 A group member already inside has the dungeon's full buff offset.  No Spellpower buff will be applied to spell casters.  ALL group members must exit the dungeon and re-enter to receive a balanced offset.";
+						ChatHandler(player->GetSession()).PSendSysMessage(ss.str().c_str(), map->GetMapName(), difficulty, classBalance);
+					}
+				}
 
 				// Save Player Dungeon Offsets to Database
 				CharacterDatabase.Execute("REPLACE INTO custom_solocraft_character_stats (GUID, Difficulty, GroupSize, SpellPower, Stats) VALUES ({}, {}, {}, {}, {})", player->GetGUID().GetCounter(), difficulty, numInGroup, SpellPowerBonus, SoloCraftStatsMult);
