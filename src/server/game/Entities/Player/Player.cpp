@@ -2356,6 +2356,10 @@ void Player::GiveXP(uint32 xp, Unit* victim, float group_rate, bool isLFGReward)
 
     uint8 level = getLevel();
 
+
+    if (IsPremium())
+        xp *= 1.5f;
+
     sScriptMgr->OnGivePlayerXP(this, xp, victim);
 
     // Favored experience increase START
@@ -5862,6 +5866,9 @@ void Player::RewardReputation(Unit* victim, float rate)
         float donerep1 = CalculateReputationGain(REPUTATION_SOURCE_KILL, victim->getLevel(), static_cast<float>(Rep->RepValue1), ChampioningFaction ? ChampioningFaction : Rep->RepFaction1);
         donerep1 *= rate;
 
+        if (IsPremium())
+            donerep1 *= 1.5f;
+
         FactionEntry const* factionEntry1 = sFactionStore.LookupEntry(ChampioningFaction ? ChampioningFaction : Rep->RepFaction1);
         if (factionEntry1)
         {
@@ -5873,6 +5880,9 @@ void Player::RewardReputation(Unit* victim, float rate)
     {
         float donerep2 = CalculateReputationGain(REPUTATION_SOURCE_KILL, victim->getLevel(), static_cast<float>(Rep->RepValue2), ChampioningFaction ? ChampioningFaction : Rep->RepFaction2);
         donerep2 *= rate;
+
+        if (IsPremium())
+            donerep2 *= 1.5f;
 
         FactionEntry const* factionEntry2 = sFactionStore.LookupEntry(ChampioningFaction ? ChampioningFaction : Rep->RepFaction2);
         if (factionEntry2)
@@ -6080,6 +6090,9 @@ bool Player::RewardHonor(Unit* uVictim, uint32 groupsize, int32 honor, bool awar
     // Xinef: non quest case, quest honor obtain is send in quest reward packet
     if (uVictim || groupsize > 0)
         GetSession()->SendPacket(&data);
+
+    if (IsPremium())
+        honor = honor * 1.5f;
 
     // add honor points
     ModifyHonorPoints(honor);
@@ -9615,6 +9628,16 @@ public:
         return a->value < b->value;
     }
 };
+
+bool Player::IsPremium()
+{
+    QueryResult result = CharacterDatabase.Query("SELECT AccountId FROM premium WHERE active = 1 AND AccountId = {}", GetSession()->GetAccountId());
+
+    if (result)
+        return true;
+    else
+        return false;
+}
 
 void Player::AddSpellMod(SpellModifier* mod, bool apply)
 {
@@ -15575,6 +15598,7 @@ void Player::_SaveInstanceTimeRestrictions(CharacterDatabaseTransaction trans)
         trans->Append(stmt);
     }
 }
+
 
 bool Player::IsInWhisperWhiteList(ObjectGuid guid)
 {

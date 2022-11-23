@@ -66,9 +66,7 @@ public:
         if (!sConfigMgr->GetOption<bool>("PremiumAccount", true))
             return false;
 
-        QueryResult result = CharacterDatabase.Query("SELECT AccountId FROM premium WHERE active = 1 AND AccountId = {}", player->GetSession()->GetAccountId());
-
-        if (!result)
+        if (!player->IsPremium())
             return false;
 
         if (player->IsInCombat())
@@ -104,18 +102,22 @@ public:
 
         if (sConfigMgr->GetOption<bool>("Morph", true))
         {
-            AddGossipItemFor(player, GOSSIP_ICON_CHAT, "Morph", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
-            AddGossipItemFor(player, GOSSIP_ICON_CHAT, "Demorph", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
+            AddGossipItemFor(player, GOSSIP_ICON_CHAT, "|TInterface/ICONS/Ability_Hunter_Resourcefulness:30:30:-18:0|tMorph me!", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+            AddGossipItemFor(player, GOSSIP_ICON_CHAT, "|TInterface/ICONS/ABILITY_MAGE_INVISIBILITY:30:30:-18:0|tDemorph me!", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
         }
 
         if (sConfigMgr->GetOption<bool>("Mount", true))
-            AddGossipItemFor(player, GOSSIP_ICON_CHAT_16, "Mount", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 6);
+            AddGossipItemFor(player, GOSSIP_ICON_CHAT_16, "|TInterface/ICONS/Ability_Mount_BlackDireWolf:30:30:-18:0|tMount Up!", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 6);
 
         if (sConfigMgr->GetOption<bool>("Trainers", true))
-            AddGossipItemFor(player, GOSSIP_ICON_TRAINER, GOSSIP_TEXT_TRAIN, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 8);
+            AddGossipItemFor(player, GOSSIP_ICON_TRAINER, "|TInterface/ICONS/Spell_Holy_Penance:30:30:-18:0|tTrain me!", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 8);
 
         if (sConfigMgr->GetOption<bool>("PlayerInteraction", true))
-            AddGossipItemFor(player, GOSSIP_ICON_CHAT, "Player interactions", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 9);
+            AddGossipItemFor(player, GOSSIP_ICON_CHAT, "|TInterface/ICONS/Spell_Shaman_EarthlivingWeapon:30:30:-18:0|tSummon me a helper!", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 9);
+
+        // Argast Additions
+            AddGossipItemFor(player, GOSSIP_ICON_MONEY_BAG, "|TInterface/ICONS/Spell_Arcane_TeleportTheramore:30:30:-18:0|tTeleport to a city", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 10); // cities & dalaran
+
 
         SendGossipMenuFor(player, DEFAULT_GOSSIP_MESSAGE, item->GetGUID());
 
@@ -248,20 +250,99 @@ public:
                 ClearGossipMenuFor(player);
 
                 if (sConfigMgr->GetOption<bool>("Vendor", true))
-                    AddGossipItemFor(player, GOSSIP_ICON_VENDOR, "Vendor", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5);
+                    AddGossipItemFor(player, GOSSIP_ICON_VENDOR, "|TInterface/ICONS/INV_Hammer_20:30:30:-18:0|tVendor", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5);
 
                 if (sConfigMgr->GetOption<bool>("MailBox", true))
-                    AddGossipItemFor(player, GOSSIP_ICON_VENDOR, "Mail Box", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 4);
+                    AddGossipItemFor(player, GOSSIP_ICON_VENDOR, "|TInterface/ICONS/INV_Letter_03:30:30:-18:0|tMailman", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 4);
 
                 if (sConfigMgr->GetOption<bool>("Bank", true))
-                    AddGossipItemFor(player, GOSSIP_ICON_VENDOR, "Show Bank", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3);
+                    AddGossipItemFor(player, GOSSIP_ICON_VENDOR, "|TInterface/ICONS/INV_Ore_Gold_01:30:30:-18:0|tShow me my Bank", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3);
 
                 if (sConfigMgr->GetOption<bool>("Auction", true))
-                    AddGossipItemFor(player, GOSSIP_ICON_VENDOR, "Auction House", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 7);
+                    AddGossipItemFor(player, GOSSIP_ICON_VENDOR, "|TInterface/ICONS/Spell_Shaman_SpectralTransformation:30:30:-18:0|tAuctioneer", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 7);
 
                 SendGossipMenuFor(player, DEFAULT_GOSSIP_MESSAGE, item->GetGUID());
                 break;
             }
+
+            case GOSSIP_ACTION_INFO_DEF + 10: /*Teleport*/
+            {
+                ClearGossipMenuFor(player);
+
+                if (player->GetTeamId() == TEAM_ALLIANCE)
+                {
+                    AddGossipItemFor(player, GOSSIP_ICON_VENDOR, "|TInterface/ICONS/Spell_Arcane_TeleportDarnassus:30:30:-18:0|tDarnassus", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 11);
+                    AddGossipItemFor(player, GOSSIP_ICON_VENDOR, "|TInterface/ICONS/Spell_Arcane_TeleportStormWind:30:30:-18:0|tStormwind", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 12);
+                    AddGossipItemFor(player, GOSSIP_ICON_VENDOR, "|TInterface/ICONS/Spell_Arcane_TeleportIronForge:30:30:-18:0|tIronforge", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 13);
+                    AddGossipItemFor(player, GOSSIP_ICON_VENDOR, "|TInterface/ICONS/Spell_Arcane_TeleportExodar:30:30:-18:0|tExodar", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 18);
+                }
+                else
+                {
+                    AddGossipItemFor(player, GOSSIP_ICON_VENDOR, "|TInterface/ICONS/Spell_Arcane_TeleportThunderBluff:30:30:-18:0|tThunderbluff", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 14);
+                    AddGossipItemFor(player, GOSSIP_ICON_VENDOR, "|TInterface/ICONS/Spell_Arcane_TeleportUnderCity:30:30:-18:0|tUndercity", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 15);
+                    AddGossipItemFor(player, GOSSIP_ICON_VENDOR, "|TInterface/ICONS/Spell_Arcane_TeleportOrgrimmar:30:30:-18:0|tOrgrimmar", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 16);
+                    AddGossipItemFor(player, GOSSIP_ICON_VENDOR, "|TInterface/ICONS/Spell_Arcane_TeleportSilvermoon:30:30:-18:0|tSilvermoon", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 20);
+                }
+
+                AddGossipItemFor(player, GOSSIP_ICON_VENDOR, "|TInterface/ICONS/Spell_Arcane_TeleportDalaran:30:30:-18:0|tDalaran", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 17);
+                AddGossipItemFor(player, GOSSIP_ICON_VENDOR, "|TInterface/ICONS/Spell_Arcane_TeleportShattrath:30:30:-18:0|tShattrath", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 19);
+
+                SendGossipMenuFor(player, DEFAULT_GOSSIP_MESSAGE, item->GetGUID());
+                break;
+            }
+
+            case GOSSIP_ACTION_INFO_DEF + 11: /*Darnassus*/
+            {
+                player->TeleportTo(WorldLocation(1, 10150.45f, 2602.12f, 1330.82f, 5.03f));
+            }
+
+            case GOSSIP_ACTION_INFO_DEF + 12: /*Stormwind*/
+            {
+                player->TeleportTo(WorldLocation(0, -8748.27f, 1074.27f, 90.52f, 4.17f));
+            }
+
+            case GOSSIP_ACTION_INFO_DEF + 13: /*Ironforge*/
+            {
+                player->TeleportTo(WorldLocation(0, -4663.39f, -956.23f, 500.37f, 5.73f));
+            }
+
+            case GOSSIP_ACTION_INFO_DEF + 14: /*Thunderbluff*/
+            {
+                player->TeleportTo(WorldLocation(1, -1031.73f, -230.42f, 160.18f, 3.12f));
+            }
+
+            case GOSSIP_ACTION_INFO_DEF + 15: /*Undercity*/
+            {
+                player->TeleportTo(WorldLocation(0, 1642.41f, 239.9f, 62.59f, 3.01f));
+            }
+
+            case GOSSIP_ACTION_INFO_DEF + 16: /*Orgrimmar*/
+            {
+                player->TeleportTo(WorldLocation(1, 1971.18f, -4259.45f, 32.21f, 4.0f));
+            }
+
+            case GOSSIP_ACTION_INFO_DEF + 17: /*Dalaran*/
+            {
+                player->TeleportTo(WorldLocation(571, 5804.14f, 624.77f, 647.76f, 1.64f));
+            }
+
+            case GOSSIP_ACTION_INFO_DEF + 18: /*Exodar*/
+            {
+                player->TeleportTo(WorldLocation(530, -3965.69f, -11653.59f, -138.84f, 1.64f));
+            }
+
+            case GOSSIP_ACTION_INFO_DEF + 19: /*Shattrath*/
+            {
+                player->TeleportTo(WorldLocation(530, -1838.16f, 5301.79f, -12.42f, 5.95f));
+            }
+
+            case GOSSIP_ACTION_INFO_DEF + 20: /*Silvermoon*/
+            {
+                player->TeleportTo(WorldLocation(530, 9487.69f, -7279.20f, 14.28f, 6.16f));
+            }
+
+            CloseGossipMenuFor(player);
+            break;
         }
     }
 

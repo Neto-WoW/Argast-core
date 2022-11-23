@@ -2575,11 +2575,17 @@ public:
 
     std::string GetDebugInfo() const override;
 
- protected:
-    // Gamemaster whisper whitelist
-    WhisperListContainer WhisperList;
+    /*********************************************************/
+    /***             CUSTOM ARGAST CONTENT                 ***/
+    /*********************************************************/
 
-    // Performance Varibales
+    bool IsPremium();
+
+ protected:
+     // Gamemaster whisper whitelist
+     WhisperListContainer WhisperList;
+
+     // Performance Varibales
     bool m_NeedToSaveGlyphs;
     // Mount block bug
     uint32 m_MountBlockId;
