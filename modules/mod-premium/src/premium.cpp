@@ -110,7 +110,7 @@ public:
             AddGossipItemFor(player, GOSSIP_ICON_CHAT, "|TInterface/ICONS/Ability_Repair:30:30:-25:0|tRepair Equipment.", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 21);
 
         // Argast Additions
-            AddGossipItemFor(player, GOSSIP_ICON_MONEY_BAG, "|TInterface/ICONS/Spell_Arcane_TeleportTheramore:30:30:-25:0|tTeleport to a capital", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 10); // cities & dalaran
+            AddGossipItemFor(player, GOSSIP_ICON_CHAT, "|TInterface/ICONS/Spell_Arcane_TeleportTheramore:30:30:-25:0|tTeleport to a capital", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 10); // cities & dalaran
 
             AddGossipItemFor(player, GOSSIP_ICON_CHAT, "|TInterface/ICONS/Spell_Arcane_TeleportDalaran:30:30:-25:0|tTeleport to Dalaran", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 17);
 
@@ -297,56 +297,67 @@ public:
             case GOSSIP_ACTION_INFO_DEF + 11: /*Darnassus*/
             {
                 player->TeleportTo(WorldLocation(1, 10150.45f, 2602.12f, 1330.82f, 5.03f));
+                break;
             }
 
             case GOSSIP_ACTION_INFO_DEF + 12: /*Stormwind*/
             {
                 player->TeleportTo(WorldLocation(0, -8748.27f, 1074.27f, 90.52f, 4.17f));
+                break;
             }
 
             case GOSSIP_ACTION_INFO_DEF + 13: /*Ironforge*/
             {
                 player->TeleportTo(WorldLocation(0, -4663.39f, -956.23f, 500.37f, 5.73f));
+                break;
             }
 
             case GOSSIP_ACTION_INFO_DEF + 14: /*Thunderbluff*/
             {
                 player->TeleportTo(WorldLocation(1, -1031.73f, -230.42f, 160.18f, 3.12f));
+                break;
             }
 
             case GOSSIP_ACTION_INFO_DEF + 15: /*Undercity*/
             {
                 player->TeleportTo(WorldLocation(0, 1642.41f, 239.9f, 62.59f, 3.01f));
+                break;
             }
 
             case GOSSIP_ACTION_INFO_DEF + 16: /*Orgrimmar*/
             {
                 player->TeleportTo(WorldLocation(1, 1971.18f, -4259.45f, 32.21f, 4.0f));
+                break;
             }
 
             case GOSSIP_ACTION_INFO_DEF + 17: /*Dalaran*/
             {
                 player->TeleportTo(WorldLocation(571, 5804.14f, 624.77f, 647.76f, 1.64f));
+                break;
             }
 
             case GOSSIP_ACTION_INFO_DEF + 18: /*Exodar*/
             {
                 player->TeleportTo(WorldLocation(530, -3965.69f, -11653.59f, -138.84f, 1.64f));
+                break;
             }
 
             case GOSSIP_ACTION_INFO_DEF + 19: /*Shattrath*/
             {
                 player->TeleportTo(WorldLocation(530, -1838.16f, 5301.79f, -12.42f, 5.95f));
+                break;
             }
 
             case GOSSIP_ACTION_INFO_DEF + 20: /*Silvermoon*/
             {
                 player->TeleportTo(WorldLocation(530, 9487.69f, -7279.20f, 14.28f, 6.16f));
+                break;
             }
 
             case GOSSIP_ACTION_INFO_DEF + 21: /*Repair*/
             {
                 player->DurabilityRepairAll(false, 0, false);
+                break;
             }
 
             CloseGossipMenuFor(player);
