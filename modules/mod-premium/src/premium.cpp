@@ -44,16 +44,16 @@ enum Trainers
 
 enum Mounts
 {
-    HUMAN_MOUNT     = 470,
-    ORC_MOUNT       = 6653,
-    GNOME_MOUNT     = 17454,
-    NIGHTELF_MOUNT  = 8394,
-    DWARF_MOUNT     = 6899,
-    UNEAD_MOUNT     = 17463,
-    TAUREN_MOUNT    = 64657,
-    TROLL_MOUNT     = 8395,
-    BLOODELF_MOUNT  = 35022,
-    DRAENEI_MOUNT   = 34406
+    HUMAN_MOUNT     = 22717,
+    ORC_MOUNT       = 22724,
+    GNOME_MOUNT     = 22719,
+    NIGHTELF_MOUNT  = 22723,
+    DWARF_MOUNT     = 22720,
+    UNEAD_MOUNT     = 22722,
+    TAUREN_MOUNT    = 22718,
+    TROLL_MOUNT     = 22721,
+    BLOODELF_MOUNT  = 35028,
+    DRAENEI_MOUNT   = 48027
 };
 
 class premium_account : public ItemScript
@@ -101,22 +101,25 @@ public:
         ClearGossipMenuFor(player);
 
         if (sConfigMgr->GetOption<bool>("Morph", true))
-        {
-            AddGossipItemFor(player, GOSSIP_ICON_CHAT, "|TInterface/ICONS/Ability_Hunter_Resourcefulness:30:30:-18:0|tMorph me!", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
-            AddGossipItemFor(player, GOSSIP_ICON_CHAT, "|TInterface/ICONS/ABILITY_MAGE_INVISIBILITY:30:30:-18:0|tDemorph me!", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
-        }
+            AddGossipItemFor(player, GOSSIP_ICON_CHAT, "|TInterface/ICONS/Ability_Hunter_Resourcefulness:30:30:-25:0|tMorph me!", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
 
         if (sConfigMgr->GetOption<bool>("Mount", true))
-            AddGossipItemFor(player, GOSSIP_ICON_CHAT_16, "|TInterface/ICONS/Ability_Mount_BlackDireWolf:30:30:-18:0|tMount Up!", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 6);
-
-        if (sConfigMgr->GetOption<bool>("Trainers", true))
-            AddGossipItemFor(player, GOSSIP_ICON_TRAINER, "|TInterface/ICONS/Spell_Holy_Penance:30:30:-18:0|tTrain me!", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 8);
+            AddGossipItemFor(player, GOSSIP_ICON_CHAT_16, "|TInterface/ICONS/Ability_Mount_WarHippogryph:30:30:-25:0|tSummon a Mount.", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 6);
 
         if (sConfigMgr->GetOption<bool>("PlayerInteraction", true))
-            AddGossipItemFor(player, GOSSIP_ICON_CHAT, "|TInterface/ICONS/Spell_Shaman_EarthlivingWeapon:30:30:-18:0|tSummon me a helper!", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 9);
+            AddGossipItemFor(player, GOSSIP_ICON_CHAT, "|TInterface/ICONS/Ability_Repair:30:30:-25:0|tRepair Equipment.", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 21);
 
         // Argast Additions
-            AddGossipItemFor(player, GOSSIP_ICON_MONEY_BAG, "|TInterface/ICONS/Spell_Arcane_TeleportTheramore:30:30:-18:0|tTeleport to a city", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 10); // cities & dalaran
+            AddGossipItemFor(player, GOSSIP_ICON_MONEY_BAG, "|TInterface/ICONS/Spell_Arcane_TeleportTheramore:30:30:-25:0|tTeleport to a capital", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 10); // cities & dalaran
+
+            AddGossipItemFor(player, GOSSIP_ICON_CHAT, "|TInterface/ICONS/Spell_Arcane_TeleportDalaran:30:30:-25:0|tTeleport to Dalaran", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 17);
+
+            if (sConfigMgr->GetOption<bool>("Trainers", true))
+                AddGossipItemFor(player, GOSSIP_ICON_TRAINER, "|TInterface/ICONS/Spell_Holy_Penance:30:30:-25:0|tLearn class skills", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 8);
+
+            AddGossipItemFor(player, GOSSIP_ICON_CHAT, "|TInterface/ICONS/INV_Letter_07:30:30:-25:0|tMailbox", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 4);
+
+            AddGossipItemFor(player, GOSSIP_ICON_CHAT, "|TInterface/ICONS/INV_Misc_Bag_15:30:30:-25:0|tMy Bank", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3);
 
 
         SendGossipMenuFor(player, DEFAULT_GOSSIP_MESSAGE, item->GetGUID());
@@ -250,16 +253,16 @@ public:
                 ClearGossipMenuFor(player);
 
                 if (sConfigMgr->GetOption<bool>("Vendor", true))
-                    AddGossipItemFor(player, GOSSIP_ICON_VENDOR, "|TInterface/ICONS/INV_Hammer_20:30:30:-18:0|tVendor", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5);
+                    AddGossipItemFor(player, GOSSIP_ICON_VENDOR, "|TInterface/ICONS/INV_Hammer_20:30:30:-25:0|tVendor", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5);
 
                 if (sConfigMgr->GetOption<bool>("MailBox", true))
-                    AddGossipItemFor(player, GOSSIP_ICON_VENDOR, "|TInterface/ICONS/INV_Letter_03:30:30:-18:0|tMailman", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 4);
+                    AddGossipItemFor(player, GOSSIP_ICON_VENDOR, "|TInterface/ICONS/INV_Letter_03:30:30:-25:0|tMailman", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 4);
 
                 if (sConfigMgr->GetOption<bool>("Bank", true))
-                    AddGossipItemFor(player, GOSSIP_ICON_VENDOR, "|TInterface/ICONS/INV_Ore_Gold_01:30:30:-18:0|tShow me my Bank", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3);
+                    AddGossipItemFor(player, GOSSIP_ICON_VENDOR, "|TInterface/ICONS/INV_Ore_Gold_01:30:30:-25:0|tShow me my Bank", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3);
 
                 if (sConfigMgr->GetOption<bool>("Auction", true))
-                    AddGossipItemFor(player, GOSSIP_ICON_VENDOR, "|TInterface/ICONS/Spell_Shaman_SpectralTransformation:30:30:-18:0|tAuctioneer", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 7);
+                    AddGossipItemFor(player, GOSSIP_ICON_VENDOR, "|TInterface/ICONS/Spell_Shaman_SpectralTransformation:30:30:-25:0|tAuctioneer", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 7);
 
                 SendGossipMenuFor(player, DEFAULT_GOSSIP_MESSAGE, item->GetGUID());
                 break;
@@ -271,21 +274,21 @@ public:
 
                 if (player->GetTeamId() == TEAM_ALLIANCE)
                 {
-                    AddGossipItemFor(player, GOSSIP_ICON_VENDOR, "|TInterface/ICONS/Spell_Arcane_TeleportDarnassus:30:30:-18:0|tDarnassus", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 11);
-                    AddGossipItemFor(player, GOSSIP_ICON_VENDOR, "|TInterface/ICONS/Spell_Arcane_TeleportStormWind:30:30:-18:0|tStormwind", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 12);
-                    AddGossipItemFor(player, GOSSIP_ICON_VENDOR, "|TInterface/ICONS/Spell_Arcane_TeleportIronForge:30:30:-18:0|tIronforge", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 13);
-                    AddGossipItemFor(player, GOSSIP_ICON_VENDOR, "|TInterface/ICONS/Spell_Arcane_TeleportExodar:30:30:-18:0|tExodar", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 18);
+                    AddGossipItemFor(player, GOSSIP_ICON_VENDOR, "|TInterface/ICONS/Spell_Arcane_TeleportDarnassus:30:30:-25:0|tDarnassus", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 11);
+                    AddGossipItemFor(player, GOSSIP_ICON_VENDOR, "|TInterface/ICONS/Spell_Arcane_TeleportStormWind:30:30:-25:0|tStormwind", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 12);
+                    AddGossipItemFor(player, GOSSIP_ICON_VENDOR, "|TInterface/ICONS/Spell_Arcane_TeleportIronForge:30:30:-25:0|tIronforge", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 13);
+                    AddGossipItemFor(player, GOSSIP_ICON_VENDOR, "|TInterface/ICONS/Spell_Arcane_TeleportExodar:30:30:-25:0|tExodar", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 18);
                 }
                 else
                 {
-                    AddGossipItemFor(player, GOSSIP_ICON_VENDOR, "|TInterface/ICONS/Spell_Arcane_TeleportThunderBluff:30:30:-18:0|tThunderbluff", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 14);
-                    AddGossipItemFor(player, GOSSIP_ICON_VENDOR, "|TInterface/ICONS/Spell_Arcane_TeleportUnderCity:30:30:-18:0|tUndercity", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 15);
-                    AddGossipItemFor(player, GOSSIP_ICON_VENDOR, "|TInterface/ICONS/Spell_Arcane_TeleportOrgrimmar:30:30:-18:0|tOrgrimmar", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 16);
-                    AddGossipItemFor(player, GOSSIP_ICON_VENDOR, "|TInterface/ICONS/Spell_Arcane_TeleportSilvermoon:30:30:-18:0|tSilvermoon", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 20);
+                    AddGossipItemFor(player, GOSSIP_ICON_VENDOR, "|TInterface/ICONS/Spell_Arcane_TeleportThunderBluff:30:30:-25:0|tThunderbluff", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 14);
+                    AddGossipItemFor(player, GOSSIP_ICON_VENDOR, "|TInterface/ICONS/Spell_Arcane_TeleportUnderCity:30:30:-25:0|tUndercity", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 15);
+                    AddGossipItemFor(player, GOSSIP_ICON_VENDOR, "|TInterface/ICONS/Spell_Arcane_TeleportOrgrimmar:30:30:-25:0|tOrgrimmar", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 16);
+                    AddGossipItemFor(player, GOSSIP_ICON_VENDOR, "|TInterface/ICONS/Spell_Arcane_TeleportSilvermoon:30:30:-25:0|tSilvermoon", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 20);
                 }
 
-                AddGossipItemFor(player, GOSSIP_ICON_VENDOR, "|TInterface/ICONS/Spell_Arcane_TeleportDalaran:30:30:-18:0|tDalaran", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 17);
-                AddGossipItemFor(player, GOSSIP_ICON_VENDOR, "|TInterface/ICONS/Spell_Arcane_TeleportShattrath:30:30:-18:0|tShattrath", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 19);
+                AddGossipItemFor(player, GOSSIP_ICON_VENDOR, "|TInterface/ICONS/Spell_Arcane_TeleportDalaran:30:30:-25:0|tDalaran", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 17);
+                AddGossipItemFor(player, GOSSIP_ICON_VENDOR, "|TInterface/ICONS/Spell_Arcane_TeleportShattrath:30:30:-25:0|tShattrath", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 19);
 
                 SendGossipMenuFor(player, DEFAULT_GOSSIP_MESSAGE, item->GetGUID());
                 break;
@@ -339,6 +342,11 @@ public:
             case GOSSIP_ACTION_INFO_DEF + 20: /*Silvermoon*/
             {
                 player->TeleportTo(WorldLocation(530, 9487.69f, -7279.20f, 14.28f, 6.16f));
+            }
+
+            case GOSSIP_ACTION_INFO_DEF + 21: /*Repair*/
+            {
+                player->DurabilityRepairAll(false, 0, false);
             }
 
             CloseGossipMenuFor(player);
