@@ -107,16 +107,16 @@ public:
             AddGossipItemFor(player, GOSSIP_ICON_CHAT, "|TInterface/ICONS/Ability_Repair:30:30:-25:0|tRepair Equipment.", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 21);
 
         // Argast Additions
-            AddGossipItemFor(player, GOSSIP_ICON_CHAT, "|TInterface/ICONS/Spell_Arcane_TeleportTheramore:30:30:-25:0|tTeleport to a capital", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 10); // cities & dalaran
+        AddGossipItemFor(player, GOSSIP_ICON_CHAT, "|TInterface/ICONS/Spell_Arcane_TeleportTheramore:30:30:-25:0|tTeleport to a capital", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 10); // cities & dalaran
 
-            AddGossipItemFor(player, GOSSIP_ICON_CHAT, "|TInterface/ICONS/Spell_Arcane_TeleportDalaran:30:30:-25:0|tTeleport to Dalaran", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 17);
+        AddGossipItemFor(player, GOSSIP_ICON_CHAT, "|TInterface/ICONS/Spell_Arcane_TeleportDalaran:30:30:-25:0|tTeleport to Dalaran", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 17);
 
-            if (sConfigMgr->GetOption<bool>("Trainers", true))
-                AddGossipItemFor(player, GOSSIP_ICON_TRAINER, "|TInterface/ICONS/Spell_Holy_Penance:30:30:-25:0|tLearn class skills", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 8);
+        if (sConfigMgr->GetOption<bool>("Trainers", true))
+            AddGossipItemFor(player, GOSSIP_ICON_TRAINER, "|TInterface/ICONS/Spell_Holy_Penance:30:30:-25:0|tLearn class skills", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 8);
 
-            AddGossipItemFor(player, GOSSIP_ICON_CHAT, "|TInterface/ICONS/INV_Letter_07:30:30:-25:0|tMailbox", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 4);
+        AddGossipItemFor(player, GOSSIP_ICON_CHAT, "|TInterface/ICONS/INV_Letter_07:30:30:-25:0|tMailbox", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 4);
 
-            AddGossipItemFor(player, GOSSIP_ICON_CHAT, "|TInterface/ICONS/INV_Misc_Bag_15:30:30:-25:0|tMy Bank", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3);
+        AddGossipItemFor(player, GOSSIP_ICON_CHAT, "|TInterface/ICONS/INV_Misc_Bag_15:30:30:-25:0|tMy Bank", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3);
 
 
         SendGossipMenuFor(player, DEFAULT_GOSSIP_MESSAGE, item->GetGUID());
