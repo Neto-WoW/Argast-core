@@ -100,9 +100,6 @@ public:
 
         ClearGossipMenuFor(player);
 
-        if (sConfigMgr->GetOption<bool>("Morph", true))
-            AddGossipItemFor(player, GOSSIP_ICON_CHAT, "|TInterface/ICONS/Ability_Hunter_Resourcefulness:30:30:-25:0|tMorph me!", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
-
         if (sConfigMgr->GetOption<bool>("Mount", true))
             AddGossipItemFor(player, GOSSIP_ICON_CHAT_16, "|TInterface/ICONS/Ability_Mount_WarHippogryph:30:30:-25:0|tSummon a Mount.", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 6);
 
