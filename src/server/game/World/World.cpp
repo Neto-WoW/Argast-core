@@ -450,7 +450,7 @@ void World::LoadConfigSettings(bool reload)
         SetPlayerAmountLimit(sConfigMgr->GetOption<int32>("PlayerLimit", 1000));
     }
 
-    Motd::SetMotd(sConfigMgr->GetOption<std::string>("Motd", "Welcome to an AzerothCore server"));
+    Motd::SetMotd(sConfigMgr->GetOption<std::string>("Motd", "Welcome to Argast"));
 
     ///- Read ticket system setting from the config file
     m_bool_configs[CONFIG_ALLOW_TICKETS] = sConfigMgr->GetOption<bool>("AllowTickets", true);
