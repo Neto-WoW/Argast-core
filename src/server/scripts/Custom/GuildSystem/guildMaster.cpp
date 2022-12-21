@@ -28,28 +28,28 @@ public:
 		player->PlayerTalkClass->ClearMenus();
 		if (uint32 m_id = player->GetGuildId())
 		{
-			QueryResult result = CharacterDatabase.PQuery("SELECT level, xp FROM guild WHERE guildid = %u", m_id);
+			QueryResult result = CharacterDatabase.Query("SELECT level, xp FROM guild WHERE guildid = %u", m_id);
 			if (result)
 			{
 				Field* fields = result->Fetch();
-				uint32 level = fields[0].GetUInt32();
+				uint32 level = fields[0].Get<uint32>();
 
 
 
 				std::string msg = "|TInterface/ICONS/achievement_level_80:20:20|tУровень вашей гильдии: [|cffE80000" + std::to_string(level) + "|r]";
-				player->ADD_GOSSIP_ITEM(0, msg.c_str(), GOSSIP_SENDER_MAIN, 1);
+                AddGossipItemFor(player, 0, msg.c_str(), GOSSIP_SENDER_MAIN, 1);
 
 
 				if (level >= 9) {
 				}
 				else {
-					player->ADD_GOSSIP_ITEM(0, "|TInterface/ICONS/inv_misc_coin_16:20:20|tПовысить уровень гильдии", GOSSIP_SENDER_MAIN, 2);
+                    AddGossipItemFor(player, 0, "|TInterface/ICONS/inv_misc_coin_16:20:20|tПовысить уровень гильдии", GOSSIP_SENDER_MAIN, 2);
 				}
 
-				player->ADD_GOSSIP_ITEM(0, "|TInterface/ICONS/inv_misc_book_04:20:20|tСостояние моей гильдии", GOSSIP_SENDER_MAIN, 4);
-				//player->ADD_GOSSIP_ITEM(0,"|TInterface/ICONS/inv_helmet_44:20:20|tЧто дают бонусы?", GOSSIP_SENDER_MAIN, 5);
-				player->ADD_GOSSIP_ITEM(0, "|TInterface/ICONS/spell_holy_holyguidance:20:20|tДействующие бонусы", GOSSIP_SENDER_MAIN, 6);
-				player->ADD_GOSSIP_ITEM(0, "|TInterface/ICONS/Ability_Spy:20:20|tВыход", GOSSIP_SENDER_MAIN, 10);
+                AddGossipItemFor(player, 0, "|TInterface/ICONS/inv_misc_book_04:20:20|tСостояние моей гильдии", GOSSIP_SENDER_MAIN, 4);
+				//AddGossipItemFor(player,0,"|TInterface/ICONS/inv_helmet_44:20:20|tЧто дают бонусы?", GOSSIP_SENDER_MAIN, 5);
+                AddGossipItemFor(player, 0, "|TInterface/ICONS/spell_holy_holyguidance:20:20|tДействующие бонусы", GOSSIP_SENDER_MAIN, 6);
+                AddGossipItemFor(player, 0, "|TInterface/ICONS/Ability_Spy:20:20|tВыход", GOSSIP_SENDER_MAIN, 10);
 
 			}
 			else {
@@ -57,7 +57,7 @@ public:
 				player->PlayerTalkClass->SendCloseGossip();
 				return true;
 			}
-			player->SEND_GOSSIP_MENU(1, creature->GetGUID());
+            SendGossipMenuFor(player, 1, creature->GetGUID());
 			return true;
 
 		}
@@ -80,12 +80,12 @@ public:
 		case 2: /* Что-то вроде того (Не фак что интерактив сроботает) */
 		{
 			player->PlayerTalkClass->ClearMenus();
-			player->ADD_GOSSIP_ITEM_EXTENDED(1, "|TInterface/ICONS/inv_misc_frostemblem_01:20:20|tЭмблемы льда", GOSSIP_SENDER_MAIN, 100, "|c001CE6B9[Информация]|r |n Курс обмена|c00540081[Эмблема льда]|r х1 на |c007EBFF1[Опыт гильдии]|r х10. |n Учьтите если вы нажмёте |c004E2A04[Enter]|r ничего не произойдёт", 0, true);
-			player->ADD_GOSSIP_ITEM_EXTENDED(1, "|TInterface/ICONS/spell_holy_summonchampion:20:20|tЭмблемы триумфа", GOSSIP_SENDER_MAIN, 101, "|c001CE6B9[Информация]|r |n Курс обмена|c00540081[Эмблемы триумфа]|r х5 на |c007EBFF1[Опыт гильдии]|r х1. |n Учьтите если вы нажмёте |c004E2A04[Enter]|r ничего не произойдёт", 0, true);
-			player->ADD_GOSSIP_ITEM_EXTENDED(1, "|TInterface/ICONS/spell_holy_championsgrace:20:20|tЭмблемы завоевания", GOSSIP_SENDER_MAIN, 102, "|c001CE6B9[Информация]|r |n Курс обмена|c00540081[Эмблема завоевания]|r х1 на |c007EBFF1[Опыт гильдии]|r х5. |n Учьтите если вы нажмёте |c004E2A04[Enter]|r ничего не произойдёт", 0, true);
-			player->ADD_GOSSIP_ITEM(0, "|TInterface/ICONS/achievement_featsofstrength_gladiator_08:20:20|tОчки чести", GOSSIP_SENDER_MAIN, 11);
-			player->ADD_GOSSIP_ITEM(0, "|TInterface/ICONS/Ability_Spy:20:20|tНазад", GOSSIP_SENDER_MAIN, 3);
-			player->SEND_GOSSIP_MENU(DEFAULT_GOSSIP_MESSAGE, _Creature->GetGUID());
+            AddGossipItemFor(player, 1, "|TInterface/ICONS/inv_misc_frostemblem_01:20:20|tЭмблемы льда", GOSSIP_SENDER_MAIN, 100, "|c001CE6B9[Информация]|r |n Курс обмена|c00540081[Эмблема льда]|r х1 на |c007EBFF1[Опыт гильдии]|r х10. |n Учьтите если вы нажмёте |c004E2A04[Enter]|r ничего не произойдёт", 0, true);
+            AddGossipItemFor(player, 1, "|TInterface/ICONS/spell_holy_summonchampion:20:20|tЭмблемы триумфа", GOSSIP_SENDER_MAIN, 101, "|c001CE6B9[Информация]|r |n Курс обмена|c00540081[Эмблемы триумфа]|r х5 на |c007EBFF1[Опыт гильдии]|r х1. |n Учьтите если вы нажмёте |c004E2A04[Enter]|r ничего не произойдёт", 0, true);
+            AddGossipItemFor(player, 1, "|TInterface/ICONS/spell_holy_championsgrace:20:20|tЭмблемы завоевания", GOSSIP_SENDER_MAIN, 102, "|c001CE6B9[Информация]|r |n Курс обмена|c00540081[Эмблема завоевания]|r х1 на |c007EBFF1[Опыт гильдии]|r х5. |n Учьтите если вы нажмёте |c004E2A04[Enter]|r ничего не произойдёт", 0, true);
+            AddGossipItemFor(player, 0, "|TInterface/ICONS/achievement_featsofstrength_gladiator_08:20:20|tОчки чести", GOSSIP_SENDER_MAIN, 11);
+            AddGossipItemFor(player, 0, "|TInterface/ICONS/Ability_Spy:20:20|tНазад", GOSSIP_SENDER_MAIN, 3);
+            SendGossipMenuFor(player, DEFAULT_GOSSIP_MESSAGE, _Creature->GetGUID());
 		}
 		break;
 		case 3: //main menu
@@ -93,29 +93,29 @@ public:
 			break;
 		case 4: //guild info
 			guildInfo(player);
-			player->CLOSE_GOSSIP_MENU();
+            CloseGossipMenuFor(player);
 			break;
 		case 5: //About bonus
 			player->PlayerTalkClass->ClearMenus();
-			player->SEND_GOSSIP_MENU(70010, _Creature->GetGUID());
-			player->ADD_GOSSIP_ITEM(0, "|TInterface/ICONS/Ability_Spy:20:20|tНазад", GOSSIP_SENDER_MAIN, 2);
+			SendGossipMenuFor(player, 70010, _Creature->GetGUID());
+			AddGossipItemFor(player,0, "|TInterface/ICONS/Ability_Spy:20:20|tНазад", GOSSIP_SENDER_MAIN, 2);
 			break;
 		case 6: //Active bonus
 			bonusInfo(player);
-			player->CLOSE_GOSSIP_MENU();
+            CloseGossipMenuFor(player);
 			break;
 		case 10: //exit
-			player->CLOSE_GOSSIP_MENU();
+            CloseGossipMenuFor(player);
 			break;
 		case 11: //honor point
 			player->PlayerTalkClass->ClearMenus();
-			player->ADD_GOSSIP_ITEM(0, "1000 очков чести", GOSSIP_SENDER_MAIN, 12);
-			player->ADD_GOSSIP_ITEM(0, "5000 очков чести", GOSSIP_SENDER_MAIN, 13);
-			player->ADD_GOSSIP_ITEM(0, "10000 очков чести", GOSSIP_SENDER_MAIN, 14);
-			player->ADD_GOSSIP_ITEM(0, "25000 очков чести", GOSSIP_SENDER_MAIN, 15);
-			player->ADD_GOSSIP_ITEM(0, "50000 очков чести", GOSSIP_SENDER_MAIN, 16);
-			player->ADD_GOSSIP_ITEM(0, "|TInterface/ICONS/Ability_Spy:20:20|tНазад", GOSSIP_SENDER_MAIN, 2);
-			player->SEND_GOSSIP_MENU(DEFAULT_GOSSIP_MESSAGE, _Creature->GetGUID());
+            AddGossipItemFor(player, 0, "1000 очков чести", GOSSIP_SENDER_MAIN, 12);
+			AddGossipItemFor(player,0, "5000 очков чести", GOSSIP_SENDER_MAIN, 13);
+			AddGossipItemFor(player,0, "10000 очков чести", GOSSIP_SENDER_MAIN, 14);
+			AddGossipItemFor(player,0, "25000 очков чести", GOSSIP_SENDER_MAIN, 15);
+			AddGossipItemFor(player,0, "50000 очков чести", GOSSIP_SENDER_MAIN, 16);
+			AddGossipItemFor(player,0, "|TInterface/ICONS/Ability_Spy:20:20|tНазад", GOSSIP_SENDER_MAIN, 2);
+			SendGossipMenuFor(player, DEFAULT_GOSSIP_MESSAGE, _Creature->GetGUID());
 			break;
 
 		case 12:
@@ -142,25 +142,25 @@ public:
 		uint32 GuildID = player->GetGuildId();
 
 
-		QueryResult resultXP = CharacterDatabase.PQuery("SELECT xp FROM guild WHERE guildid = %u", GuildID);
+		QueryResult resultXP = CharacterDatabase.Query("SELECT xp FROM guild WHERE guildid = %u", GuildID);
 		if (resultXP)
 		{
 			Field* fields = resultXP->Fetch();
-			uint32 xp = fields[0].GetUInt32();
+			uint32 xp = fields[0].Get<uint32>();
 			uint32 result = xp + expReward;
 
 			if (player->GetHonorPoints() >= countHonor)
 			{
 				player->ModifyHonorPoints(-countHonor);
-				CharacterDatabase.PQuery("UPDATE guild SET xp =  %u WHERE guildid = %u", result, GuildID);
+				CharacterDatabase.Query("UPDATE guild SET xp =  %u WHERE guildid = %u", result, GuildID);
 				ChatHandler(player->GetSession()).PSendSysMessage("|c001CE6B9[Гильд-мастер]:|r |c00FFFFFFВы успешно сделали свой вклад|r %u |c00540081[Очков чести]|r|c00FFFFFF в вашу гильдию.|r", countHonor);
 				guildInfo(player);
-				player->CLOSE_GOSSIP_MENU();
+                CloseGossipMenuFor(player);
 
 			}
 			else {
 				ChatHandler(player->GetSession()).PSendSysMessage("|c001CE6B9[Гильд-мастер]:|r |c00FFFFFFУ вас не достаточно |r|c00540081[Очков чести]|r");
-				player->CLOSE_GOSSIP_MENU();
+                CloseGossipMenuFor(player);
 			}
 
 		}
@@ -173,11 +173,11 @@ public:
 
 		uint32 m_id = player->GetGuildId();
 
-		QueryResult result = CharacterDatabase.PQuery("SELECT level, xp FROM guild WHERE guildid = %u", m_id);
+		QueryResult result = CharacterDatabase.Query("SELECT level, xp FROM guild WHERE guildid = %u", m_id);
 		if (result)
 		{
 			Field* fields = result->Fetch();
-			uint32 level = fields[0].GetUInt32();
+			uint32 level = fields[0].Get<uint32>();
 
 			if (level <= 0)
 			{
@@ -224,17 +224,17 @@ public:
 		uint32 pointscoef = points * 10;
 		uint32 GuildID = player->GetGuildId();
 
-		QueryResult resultXP = CharacterDatabase.PQuery("SELECT xp FROM guild WHERE guildid = %u", GuildID);
+		QueryResult resultXP = CharacterDatabase.Query("SELECT xp FROM guild WHERE guildid = %u", GuildID);
 		if (resultXP)
 		{
 			Field* fields = resultXP->Fetch();
-			uint32 xp = fields[0].GetUInt32();
+			uint32 xp = fields[0].Get<uint32>();
 			uint32 istok = xp + pointscoef;
 
 			if (player->HasItemCount(49426, points))
 			{
 				player->DestroyItemCount(49426, points, true, false);
-				CharacterDatabase.PQuery("UPDATE guild SET xp = %u WHERE guildid = %u", istok, GuildID);
+				CharacterDatabase.Query("UPDATE guild SET xp = %u WHERE guildid = %u", istok, GuildID);
 				ChatHandler(player->GetSession()).PSendSysMessage("|c001CE6B9[Гильд-мастер]:|r |c00FFFFFFВы успешно сделали свой вклад|r %u |c00540081[Эмблем льда]|r|c00FFFFFF в вашу гильдию.|r", points);
 				guildInfo(player);
 				player->PlayerTalkClass->ClearMenus();
@@ -252,20 +252,20 @@ public:
 	void guildInfo(Player* player)
 	{
 		uint32 GuildID = player->GetGuildId();
-		QueryResult result = CharacterDatabase.PQuery("SELECT level, xp FROM guild WHERE guildid = %u", GuildID);
+		QueryResult result = CharacterDatabase.Query("SELECT level, xp FROM guild WHERE guildid = %u", GuildID);
 
 		if (result)
 		{
 			Field* fields = result->Fetch();
-			uint32 level = fields[0].GetUInt32();
-			uint32 xp = fields[1].GetUInt32();
+			uint32 level = fields[0].Get<uint32>();
+			uint32 xp = fields[1].Get<uint32>();
 
-			QueryResult result1 = CharacterDatabase.PQuery("SELECT xp_for_next_level FROM guild_xp_for_next_level WHERE level = %u", level);
+			QueryResult result1 = CharacterDatabase.Query("SELECT xp_for_next_level FROM guild_xp_for_next_level WHERE level = %u", level);
 
 			if (result1)
 			{
 				Field* fields = result1->Fetch();
-				uint32 exe = fields[0].GetUInt32();
+				uint32 exe = fields[0].Get<uint32>();
 				ChatHandler(player->GetSession()).PSendSysMessage("Уровень вашей гильдии [%u]", level);
 				ChatHandler(player->GetSession()).PSendSysMessage("Текущий опыт [%u/%u]", xp, exe);
 				player->PlayerTalkClass->ClearMenus();
@@ -278,17 +278,17 @@ public:
 		uint32 pointscoef = points * 5;
 		uint32 GuildID = player->GetGuildId();
 
-		QueryResult resultXP = CharacterDatabase.PQuery("SELECT xp FROM guild WHERE guildid = %u", GuildID);
+		QueryResult resultXP = CharacterDatabase.Query("SELECT xp FROM guild WHERE guildid = %u", GuildID);
 		if (resultXP)
 		{
 			Field* fields = resultXP->Fetch();
-			uint32 xp = fields[0].GetUInt32();
+			uint32 xp = fields[0].Get<uint32>();
 			uint32 istok = xp + pointscoef;
 
 			if (player->HasItemCount(47241, points))
 			{
 				player->DestroyItemCount(47241, points, true, false);
-				CharacterDatabase.PQuery("UPDATE guild SET xp =  %u WHERE guildid = %u", istok, GuildID);
+				CharacterDatabase.Query("UPDATE guild SET xp =  %u WHERE guildid = %u", istok, GuildID);
 				ChatHandler(player->GetSession()).PSendSysMessage("|c001CE6B9[Гильд-мастер]:|r |c00FFFFFFВы успешно сделали свой вклад|r %u |c00540081[Эмблем триумфа]|r|c00FFFFFF в вашу гильдию.|r", points);
 				player->PlayerTalkClass->ClearMenus();
 				guildInfo(player);
@@ -309,17 +309,17 @@ public:
 		uint32 pointscoef = points * 5;
 		uint32 GuildID = player->GetGuildId();
 
-		QueryResult resultXP = CharacterDatabase.PQuery("SELECT xp FROM guild WHERE guildid = %u", GuildID);
+		QueryResult resultXP = CharacterDatabase.Query("SELECT xp FROM guild WHERE guildid = %u", GuildID);
 		if (resultXP)
 		{
 			Field* fields = resultXP->Fetch();
-			uint32 xp = fields[0].GetUInt32();
+			uint32 xp = fields[0].Get<uint32>();
 			uint32 istok = xp + pointscoef;
 
 			if (player->HasItemCount(45624, points))
 			{
 				player->DestroyItemCount(45624, points, true, false);
-				CharacterDatabase.PQuery("UPDATE guild SET xp =  %u WHERE guildid = %u", istok, GuildID);
+				CharacterDatabase.Query("UPDATE guild SET xp =  %u WHERE guildid = %u", istok, GuildID);
 				ChatHandler(player->GetSession()).PSendSysMessage("|c001CE6B9[Гильд-мастер]:|r |c00FFFFFFВы успешно сделали свой вклад|r %u |c00540081[Эмблем завоевания]|r|c00FFFFFF в вашу гильдию.|r", points);
 				player->PlayerTalkClass->ClearMenus();
 				guildInfo(player);
@@ -337,12 +337,12 @@ public:
 	void MessegeGuildLevelUp(Player* player)
 	{
 		uint32 GuildID = player->GetGuildId();
-		QueryResult result = CharacterDatabase.PQuery("SELECT name, level FROM guild WHERE guildid = %u", GuildID);
+		QueryResult result = CharacterDatabase.Query("SELECT name, level FROM guild WHERE guildid = %u", GuildID);
 		if (result)
 		{
 			Field* fields = result->Fetch();
-			std::string name = fields[0].GetString();
-			uint32 level = fields[1].GetUInt32();
+            std::string name = fields[0].Get<std::string>();
+			uint32 level = fields[1].Get<uint32>();
 
 			std::ostringstream ss;
 			ss << "|TInterface/ICONS/achievement_general:10:10:-23:0|tГильдия <" << name << "> получает [ " << level << " ] уровень для своей гильдии!Поздравляем";
@@ -354,22 +354,22 @@ public:
 	void UpdateLevelGuild(Player* player)
 	{
 		uint32 GuildID = player->GetGuildId();
-		QueryResult result = CharacterDatabase.PQuery("SELECT level, xp FROM guild WHERE guildid = %u", GuildID);
+		QueryResult result = CharacterDatabase.Query("SELECT level, xp FROM guild WHERE guildid = %u", GuildID);
 		if (result)
 		{
 			Field* fields = result->Fetch();
-			uint32 level = fields[0].GetUInt32();
-			uint32 xp = fields[1].GetUInt32();
+			uint32 level = fields[0].Get<uint32>();
+			uint32 xp = fields[1].Get<uint32>();
 
-			QueryResult result1 = CharacterDatabase.PQuery("SELECT xp_for_next_level FROM guild_xp_for_next_level WHERE level = %u", level);
+			QueryResult result1 = CharacterDatabase.Query("SELECT xp_for_next_level FROM guild_xp_for_next_level WHERE level = %u", level);
 
 			if (result1)
 			{
 				Field* fields = result1->Fetch();
-				uint32 exe = fields[0].GetUInt32();
+				uint32 exe = fields[0].Get<uint32>();
 
 				if (xp >= exe) {
-					CharacterDatabase.PQuery("UPDATE guild SET level = %u + 1 WHERE guildid = %u", level, GuildID);
+					CharacterDatabase.Query("UPDATE guild SET level = %u + 1 WHERE guildid = %u", level, GuildID);
 					UpdateLevelGuild(player);
 					MessegeGuildLevelUp(player);
 					player->PlayerTalkClass->ClearMenus();
@@ -400,23 +400,23 @@ public:
 			CheckPointsAce(player, code);
 			UpdateLevelGuild(player);
 			player->PlayerTalkClass->ClearMenus();
-			player->CLOSE_GOSSIP_MENU();
+            CloseGossipMenuFor(player);
 			break;
 
 		case 101:
 			CheckPointsTtriumph(player, code);
 			UpdateLevelGuild(player);
 			player->PlayerTalkClass->ClearMenus();
-			player->CLOSE_GOSSIP_MENU();
+            CloseGossipMenuFor(player);
 			break;
 		case 102:
 			CheckPointsСhampionsgrace(player, code);
 			UpdateLevelGuild(player);
 			player->PlayerTalkClass->ClearMenus();
-			player->CLOSE_GOSSIP_MENU();
+            CloseGossipMenuFor(player);
 			break;
 		case 104:
-			player->SEND_GOSSIP_MENU(70010, creature->GetGUID());
+			SendGossipMenuFor(player, 70010, creature->GetGUID());
 			break;
 
 		}
