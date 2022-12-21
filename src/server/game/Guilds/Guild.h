@@ -237,6 +237,28 @@ enum GuildMemberFlags
     GUILDMEMBER_STATUS_MOBILE           = 0x0008, // remote chat from mobile app
 };
 
+enum GuildBonus
+{
+    GUILD_BONUS_GOLD_1 = 1,
+    GUILD_BONUS_XP_1 = 2,
+    GUILD_BONUS_SCHNELLER_GEIST = 3,
+    GUILD_BONUS_REPERATUR_1 = 4,
+    GUILD_BONUS_GOLD_2 = 5,
+    GUILD_BONUS_REITTEMPO_1 = 6,
+    GUILD_BONUS_RUF_1 = 7,
+    GUILD_BONUS_XP_2 = 8,
+    GUILD_BONUS_REPERATUR_2 = 9,
+    GUILD_BONUS_REITTEMPO_2 = 10,
+    GUILD_BONUS_RUF_2 = 11,
+    GUILD_BONUS_EHRE_1 = 12,
+    GUILD_BONUS_EHRE_2 = 13,
+
+    GUILD_BONUS_MAX = 14
+};
+
+//WARNING - MAX GUILD LEVEL EPTA
+#define GUILD_MAX_LEVEL 8
+
 // Emblem info
 class EmblemInfo
 {
@@ -779,6 +801,14 @@ public:
 
     void ResetTimes();
 
+    void LoadLevelInfo();
+    bool HasLevelForBonus(uint8 guildBonus);
+    void GiveXp(uint32 value);
+    void SetLevel(uint8 level, bool byCommand);
+    uint8 GetLevel() const { return m_guild_level; };
+    uint32 GetCurrentXP() const { return m_current_guildXp; };
+    uint32 GetXpForNextLevel() const { return m_xp_for_next_level; };
+
     [[nodiscard]] bool ModifyBankMoney(CharacterDatabaseTransaction trans, const uint64& amount, bool add) { return _ModifyBankMoney(trans, amount, add); }
     [[nodiscard]] uint32 GetMemberSize() const { return m_members.size(); }
 
@@ -797,6 +827,10 @@ protected:
     std::vector<RankInfo> m_ranks;
     std::unordered_map<uint32, Member> m_members;
     std::vector<BankTab> m_bankTabs;
+
+    uint8 m_guild_level;
+    uint32 m_current_guildXp;
+    uint32 m_xp_for_next_level;
 
     // These are actually ordered lists. The first element is the oldest entry.
     LogHolder<EventLogEntry> m_eventLog;

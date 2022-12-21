@@ -1283,6 +1283,9 @@ enum AcoreStrings
     LANG_AUTO_BROADCAST                 = 11000,
     LANG_INVALID_REALMID                = 11001,
 
+    LANG_GUILDINFO_LEVEL = 13000,
+    LANG_GUILDINFO_XP_INFO = 13001,
+
     // Show Kick in world
     LANG_COMMAND_KICKMESSAGE_WORLD = 11002,
 

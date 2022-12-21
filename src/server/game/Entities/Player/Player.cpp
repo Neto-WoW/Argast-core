@@ -4342,6 +4342,13 @@ void Player::BuildPlayerRepop()
     }
     GetMap()->AddToMap(corpse);
     SetHealth(1); // convert player body to ghost
+
+    //Guild-Level-System (Bonus: Faster spirit)
+    if (!GetMap()->IsBattlegroundOrArena())
+        if (Guild* guild = GetGuild())
+            if (guild->HasLevelForBonus(GUILD_BONUS_SCHNELLER_GEIST))
+                SetSpeed(MOVE_RUN, 2.0f, true);
+
     SetMovement(MOVE_WATER_WALK);
     SetWaterWalking(true);
     if (!GetSession()->isLogingOut())
@@ -4382,6 +4389,8 @@ void Player::ResurrectPlayer(float restore_percent, bool applySickness)
     setDeathState(ALIVE);
     SetMovement(MOVE_LAND_WALK);
     SetMovement(MOVE_UNROOT);
+    //Guild-Level-System (Bonus: Faster spirit)
+    SetSpeed(MOVE_RUN, 1.0f, true);
     SetWaterWalking(false);
     m_deathTimer = 0;
 
@@ -4766,6 +4775,15 @@ uint32 Player::DurabilityRepair(uint16 pos, bool cost, float discountMod, bool g
             uint32 costs = uint32(LostDurability * dmultiplier * double(dQualitymodEntry->quality_mod));
 
             costs = uint32(costs * discountMod * sWorld->getRate(RATE_REPAIRCOST));
+
+            //Guild-Level-System (Bonus: Guenstige Reperatur)
+            if (Guild* guild = GetGuild())
+            {
+                if (guild->HasLevelForBonus(GUILD_BONUS_REPERATUR_1))
+                    costs -= uint32(costs * 0.25f);
+                if (guild->HasLevelForBonus(GUILD_BONUS_REPERATUR_2))
+                    costs -= uint32(costs * 0.5f);
+            }
 
             if (costs == 0)                                   //fix for ITEM_QUALITY_ARTIFACT
                 costs = 1;
@@ -6078,6 +6096,16 @@ bool Player::RewardHonor(Unit* uVictim, uint32 groupsize, int32 honor, bool awar
     }
 
     honor_f *= sWorld->getRate(RATE_HONOR);
+
+    //Guild-Level-System (Bonus: Ehre)
+    if (Guild* guild = GetGuild())
+    {
+        if (guild->HasLevelForBonus(GUILD_BONUS_EHRE_1))
+            honor_f *= 0.05f;
+        if (guild->HasLevelForBonus(GUILD_BONUS_EHRE_2))
+            honor_f *= 0.1f;
+    }
+
     // Back to int now
     honor = int32(honor_f);
     // honor - for show honor points in log

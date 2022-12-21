@@ -18,6 +18,7 @@
 #include "ReputationMgr.h"
 #include "DBCStores.h"
 #include "DatabaseEnv.h"
+#include "Guild.h"
 #include "ObjectMgr.h"
 #include "Player.h"
 #include "ScriptMgr.h"
@@ -406,6 +407,14 @@ bool ReputationMgr::SetOneFactionReputation(FactionEntry const* factionEntry, fl
         if (incremental)
         {
             standing += itr->second.Standing + BaseRep;
+        }
+
+        if (Guild* guild = _player->GetGuild())
+        {
+            if (guild->HasLevelForBonus(GUILD_BONUS_RUF_1))
+                standing += uint32(standing * 0.05f);
+            if (guild->HasLevelForBonus(GUILD_BONUS_RUF_2))
+                standing += uint32(standing * 0.1f);
         }
 
         if (standing > Reputation_Cap)

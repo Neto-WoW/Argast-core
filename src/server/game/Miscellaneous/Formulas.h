@@ -18,6 +18,7 @@
 #ifndef ACORE_FORMULAS_H
 #define ACORE_FORMULAS_H
 
+#include "Guild.h"
 #include "ScriptMgr.h"
 #include "SharedDefines.h"
 

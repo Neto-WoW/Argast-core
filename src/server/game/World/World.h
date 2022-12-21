@@ -352,6 +352,10 @@ public:
     [[nodiscard]] std::string const& GetRealmName() const override { return _realmName; } // pussywizard
     void SetRealmName(std::string name) override { _realmName = name; } // pussywizard
 
+    void LoadGuildBonusInfo() override;
+    uint8 GetReqGuildLevelForBonus(uint8 guildBonus) override;
+    uint8 SelectReqGuildLevelForBonus(uint8 guildBonus) override;
+
     void RemoveOldCorpses() override;
 
 protected:
@@ -445,6 +449,21 @@ private:
 
     void ProcessQueryCallbacks();
     QueryCallbackProcessor _queryProcessor;
+
+    //Guild-Level-System
+    uint8 m_req_guildLevel_gold_1;
+    uint8 m_req_guildLevel_xp_1;
+    uint8 m_req_guildLevel_schneller_geist;
+    uint8 m_req_guildLevel_reperatur_1;
+    uint8 m_req_guildLevel_gold_2;
+    uint8 m_req_guildLevel_reittempo_1;
+    uint8 m_req_guildLevel_reputation_1;
+    uint8 m_req_guildLevel_xp_2;
+    uint8 m_req_guildLevel_reperatur_2;
+    uint8 m_req_guildLevel_reittempo_2;
+    uint8 m_req_guildLevel_reputation_2;
+    uint8 m_req_guildLevel_honor_1;
+    uint8 m_req_guildLevel_honor_2;
 
     /**
      * @brief Executed when a World Session is being finalized. Be it from a normal login or via queue popping.

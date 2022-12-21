@@ -599,6 +599,10 @@ public:
     [[nodiscard]] virtual std::string const& GetRealmName() const = 0;
     virtual void SetRealmName(std::string name) = 0;
     virtual void RemoveOldCorpses() = 0;
+
+    virtual void LoadGuildBonusInfo() = 0;
+    virtual uint8 GetReqGuildLevelForBonus(uint8 guildBonus) = 0;
+    virtual uint8 SelectReqGuildLevelForBonus(uint8 guildBonus) = 0;
 };
 
 #endif //AZEROTHCORE_IWORLD_H

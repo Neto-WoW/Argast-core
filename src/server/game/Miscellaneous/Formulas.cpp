@@ -94,6 +94,15 @@ uint32 Acore::XP::Gain(Player* player, Unit* unit, bool isBattleGround /*= false
             xpMod *= creature->GetCreatureTemplate()->ModExperience;
         }
 
+        if (Guild* guild = player->GetGuild())
+        {
+            //GuildXP-Bonus
+            if (guild->HasLevelForBonus(GUILD_BONUS_XP_1))
+                gain += uint32(gain * 0.05f);
+            if (guild->HasLevelForBonus(GUILD_BONUS_XP_2))
+                gain += uint32(gain * 0.1f);
+        }
+
         if (isBattleGround)
         {
             switch (player->GetMapId())

@@ -1098,6 +1098,7 @@ bool Guild::Create(Player* pLeader, std::string_view name)
     if (ret)
         sScriptMgr->OnGuildCreate(this, pLeader, m_name);
 
+    LoadLevelInfo();
     return ret;
 }
 
@@ -1900,6 +1901,9 @@ bool Guild::LoadFromDB(Field* fields)
     m_bankTabs.reserve(purchasedTabs);
     for (uint8 i = 0; i < purchasedTabs; ++i)
         m_bankTabs.emplace_back(m_id, i);
+
+    LoadLevelInfo();
+
     return true;
 }
 
@@ -2916,4 +2920,140 @@ void Guild::ResetTimes()
         member.ResetValues();
 
     _BroadcastEvent(GE_BANK_TAB_AND_MONEY_UPDATED, ObjectGuid::Empty);
+}
+
+
+void Guild::LoadLevelInfo()
+{
+    CharacterDatabasePreparedStatement* stmt;
+    stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_GUILD_LEVEL_INFO);
+    stmt->SetData(0, m_id);
+    PreparedQueryResult result = CharacterDatabase.Query(stmt);
+
+    if (result)
+    {
+        m_current_guildXp = (*result)[0].Get<uint8>();
+        m_guild_level = (*result)[1].Get<uint8>();
+    }
+    else
+    {
+        m_current_guildXp = 0;
+        m_guild_level = 0;
+    }
+
+    if (m_guild_level < GUILD_MAX_LEVEL)
+    {
+        stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_GUILD_XP_FOR_NEXT_LEVEL);
+        stmt->SetData(0, m_guild_level);
+        PreparedQueryResult result = CharacterDatabase.Query(stmt);
+
+        if (result)
+            m_xp_for_next_level = (*result)[0].Get<uint32>();
+        else
+            m_xp_for_next_level = 0;
+    }
+}
+
+bool Guild::HasLevelForBonus(uint8 guildBonus)
+{
+    switch (guildBonus)
+    {
+    case GUILD_BONUS_GOLD_1:
+        return m_guild_level >= sWorld->GetReqGuildLevelForBonus(GUILD_BONUS_GOLD_1);
+        break;
+    case GUILD_BONUS_XP_1:
+        return m_guild_level >= sWorld->GetReqGuildLevelForBonus(GUILD_BONUS_XP_1);
+        break;
+    case GUILD_BONUS_SCHNELLER_GEIST:
+        return m_guild_level >= sWorld->GetReqGuildLevelForBonus(GUILD_BONUS_SCHNELLER_GEIST);
+        break;
+    case GUILD_BONUS_REPERATUR_1:
+        return m_guild_level >= sWorld->GetReqGuildLevelForBonus(GUILD_BONUS_REPERATUR_1);
+        break;
+    case GUILD_BONUS_GOLD_2:
+        return m_guild_level >= sWorld->GetReqGuildLevelForBonus(GUILD_BONUS_GOLD_2);
+        break;
+    case GUILD_BONUS_REITTEMPO_1:
+        return m_guild_level >= sWorld->GetReqGuildLevelForBonus(GUILD_BONUS_REITTEMPO_1);
+        break;
+    case GUILD_BONUS_RUF_1:
+        return m_guild_level >= sWorld->GetReqGuildLevelForBonus(GUILD_BONUS_RUF_1);
+        break;
+    case GUILD_BONUS_XP_2:
+        return m_guild_level >= sWorld->GetReqGuildLevelForBonus(GUILD_BONUS_XP_2);
+        break;
+    case GUILD_BONUS_REPERATUR_2:
+        return m_guild_level >= sWorld->GetReqGuildLevelForBonus(GUILD_BONUS_REPERATUR_2);
+        break;
+    case GUILD_BONUS_REITTEMPO_2:
+        return m_guild_level >= sWorld->GetReqGuildLevelForBonus(GUILD_BONUS_REITTEMPO_2);
+        break;
+    case GUILD_BONUS_RUF_2:
+        return m_guild_level >= sWorld->GetReqGuildLevelForBonus(GUILD_BONUS_RUF_2);
+        break;
+    case GUILD_BONUS_EHRE_1:
+        return m_guild_level >= sWorld->GetReqGuildLevelForBonus(GUILD_BONUS_EHRE_1);
+        break;
+    case GUILD_BONUS_EHRE_2:
+        return m_guild_level >= sWorld->GetReqGuildLevelForBonus(GUILD_BONUS_EHRE_2);
+        break;
+    default:
+        return false;
+        break;
+    }
+}
+
+void Guild::GiveXp(uint32 value)
+{
+    if (m_guild_level > GUILD_MAX_LEVEL)
+        return;
+
+    if ((m_current_guildXp + value) >= m_xp_for_next_level)
+    {
+        m_current_guildXp = ((m_current_guildXp + value) - m_xp_for_next_level);
+        SetLevel(m_guild_level + 1, false);
+    }
+    else
+        m_current_guildXp += value;
+
+    CharacterDatabasePreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_UPD_GUILD_XP);
+    stmt->SetData(0, value);
+    stmt->SetData(1, m_id);
+    CharacterDatabase.Execute(stmt);
+}
+
+void Guild::SetLevel(uint8 level, bool byCommand)
+{
+    if (level > GUILD_MAX_LEVEL)
+        return;
+
+    m_guild_level = level;
+
+    if (byCommand)
+    {
+        m_current_guildXp = 0;
+
+        CharacterDatabasePreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_UPD_GUILD_XP);
+        stmt->SetData(0, m_current_guildXp);
+        stmt->SetData(1, m_id);
+        CharacterDatabase.Execute(stmt);
+    }
+
+    char worldMsg[250];
+    sprintf(worldMsg, "The Guild %s has reached Guild Level %d.", m_name.c_str(), level);
+    sWorld->SendWorldText(SERVER_MSG_STRING, worldMsg);
+
+    //Save to DB
+    CharacterDatabasePreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_UPD_GUILD_LEVEL);
+    stmt->SetData(0, level);
+    stmt->SetData(1, m_id);
+    CharacterDatabase.Execute(stmt);
+
+    //reqXp fuers naechste Level laden
+    stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_GUILD_XP_FOR_NEXT_LEVEL);
+    stmt->SetData(0, level);
+    PreparedQueryResult result = CharacterDatabase.Query(stmt);
+
+    if (result)
+        m_xp_for_next_level = (*result)[0].Get<uint32>();
 }

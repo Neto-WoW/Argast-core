@@ -18,6 +18,7 @@
 #include "ConditionMgr.h"
 #include "AchievementMgr.h"
 #include "GameEventMgr.h"
+#include "Guild.h"
 #include "InstanceScript.h"
 #include "ObjectMgr.h"
 #include "Player.h"
@@ -500,6 +501,13 @@ bool Condition::Meets(ConditionSourceInfo& sourceInfo)
             condMeets = unit->HasAuraType(AuraType(ConditionValue1));
         break;
     }
+    case CONDITION_GUILD_LEVEL:
+    {
+        if (Player* player = object->ToPlayer())
+            if (Guild* guild = player->GetGuild())
+                condMeets = CompareValues(static_cast<ComparisionType>(ConditionValue2), static_cast<uint32>(guild->GetLevel()), ConditionValue1);
+        break;
+    }
     case CONDITION_STAND_STATE:
     {
         if (Unit* unit = object->ToUnit())
@@ -586,6 +594,8 @@ uint32 Condition::GetSearcherTypeMaskForCondition()
     case CONDITION_AURA:
         mask |= GRID_MAP_TYPE_MASK_CREATURE | GRID_MAP_TYPE_MASK_PLAYER;
         break;
+    case CONDITION_GUILD_LEVEL:
+        mask |= GRID_MAP_TYPE_MASK_PLAYER;
     case CONDITION_ITEM:
         mask |= GRID_MAP_TYPE_MASK_PLAYER;
         break;
@@ -1825,6 +1835,7 @@ bool ConditionMgr::isConditionTypeValid(Condition* cond)
     case CONDITION_TERRAIN_SWAP:
         LOG_ERROR("sql.sql", "SourceEntry {} in `condition` table has a ConditionType that is not supported on 3.3.5a ({}), ignoring.", cond->SourceEntry, uint32(cond->ConditionType));
         return false;
+
     default:
         break;
     }
@@ -1980,6 +1991,17 @@ bool ConditionMgr::isConditionTypeValid(Condition* cond)
             return false;
         }
         break;
+    case CONDITION_GUILD_LEVEL:
+    {
+        if (cond->ConditionValue2 >= COMP_TYPE_MAX)
+        {
+            LOG_ERROR("sql.sql", "Guildlevel condition has invalid option (%u), skipped", cond->ConditionValue2);
+            return false;
+        }
+        if (cond->ConditionValue3)
+            LOG_ERROR("sql.sql", "Guildlevel condition has useless data in value3 (%u)!", cond->ConditionValue3);
+        break;
+    }
     case CONDITION_ACTIVE_EVENT:
     {
         GameEventMgr::GameEventDataMap const& events = sGameEventMgr->GetEventMap();
