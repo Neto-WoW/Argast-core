@@ -1,6 +1,7 @@
 #include <map>
 #include "Log.h"
 #include "Config.h"
+#include "Common.h"
 #include "ScriptMgr.h"
 #include "Unit.h"
 #include "Player.h"
@@ -365,33 +366,33 @@ public:
 
     solocraft_player_instance_handler() : PlayerScript("solocraft_player_instance_handler") {}
 
-    void OnMapChanged(Player *player) override {
-        if (sConfigMgr->GetOption<bool>("Solocraft.Enable", true))
+    void OnMapChanged(Player* player) override {
+        if (sConfigMgr->GetOption<bool>("Solocraft.Enable", true) && IsActive())
         {
-            Map *map = player->GetMap();
+            Map* map = player->GetMap();
             float difficulty = CalculateDifficulty(map, player);
-			int dunLevel = CalculateDungeonLevel(map, player);
+            int dunLevel = CalculateDungeonLevel(map, player);
             int numInGroup = GetNumInGroup(player);
-			int classBalance = GetClassBalance(player);
+            int classBalance = GetClassBalance(player);
             ApplyBuffs(player, map, difficulty, dunLevel, numInGroup, classBalance);
         }
     }
 
 private:
 
-	std::map<uint32, float> _unitDifficulty;
+    std::map<uint32, float> _unitDifficulty;
 
     // Set the instance difficulty
     int CalculateDifficulty(Map* map, Player* /*player*/) {
         //float difficulty = 0.0;//changed from 1.0
 
         if (map) {
-			//WOTLK 25 Man raids
-            if (map->Is25ManRaid()) 
-			{
-				//if (map->IsHeroic() && map->GetId() == 649) {
-				//	return D649H25;  //Heroic Grand Trial of the Crusader
-				//}
+            //WOTLK 25 Man raids
+            if (map->Is25ManRaid())
+            {
+                //if (map->IsHeroic() && map->GetId() == 649) {
+                //	return D649H25;  //Heroic Grand Trial of the Crusader
+                //}
     //            else if (map->IsHeroic() && map->GetId() == 631) {
     //                return D631H10;  //Heroic 10 Icecrown
     //            }
@@ -411,19 +412,19 @@ private:
                         break;
                     }
                 }
-				else if(diff_Multiplier_Heroics.find(map->GetId()) == diff_Multiplier_Heroics.end()){		
-					return D25; //map not found returns the catch all value    
-				}
-				else
-					return diff_Multiplier_Heroics[map->GetId()]; //return the specific dungeon's level 					
-			}
+                else if (diff_Multiplier_Heroics.find(map->GetId()) == diff_Multiplier_Heroics.end()) {
+                    return D25; //map not found returns the catch all value    
+                }
+                else
+                    return diff_Multiplier_Heroics[map->GetId()]; //return the specific dungeon's level 					
+            }
 
-			if (map->IsHeroic()) 
-			{
-				//WOTLK 10 Man Heroic
-				//if (map->GetId() == 649) {
-				//	return D649H10;
-				//}
+            if (map->IsHeroic())
+            {
+                //WOTLK 10 Man Heroic
+                //if (map->GetId() == 649) {
+                //	return D649H10;
+                //}
 
                 switch (map->GetId())
                 {
@@ -438,284 +439,283 @@ private:
                     break;
                 }
 
-				if (diff_Multiplier_Heroics.find(map->GetId()) == diff_Multiplier_Heroics.end()){		
-					return D10; //map not found returns the catch all value    
-				}
-				else
-					return diff_Multiplier_Heroics[map->GetId()]; //return the specific dungeon's level 					
-			}
+                if (diff_Multiplier_Heroics.find(map->GetId()) == diff_Multiplier_Heroics.end()) {
+                    return D10; //map not found returns the catch all value    
+                }
+                else
+                    return diff_Multiplier_Heroics[map->GetId()]; //return the specific dungeon's level 					
+            }
 
-			if (diff_Multiplier.find(map->GetId()) == diff_Multiplier.end()) {
-				//Catch Alls  ----------------------5 Dungeons and 40 Raids
-				if (map->IsDungeon()) {
-					return D5;
-				}
-				else if (map->IsRaid()) {
-					return D40;
-				}
-			}
-			else
-				return diff_Multiplier[map->GetId()]; //return the specific dungeon's level 					
-		}
+            if (diff_Multiplier.find(map->GetId()) == diff_Multiplier.end()) {
+                //Catch Alls  ----------------------5 Dungeons and 40 Raids
+                if (map->IsDungeon()) {
+                    return D5;
+                }
+                else if (map->IsRaid()) {
+                    return D40;
+                }
+            }
+            else
+                return diff_Multiplier[map->GetId()]; //return the specific dungeon's level 					
+        }
         return 0; //return 0
     }
 
     // Set the Dungeon Level
     int CalculateDungeonLevel(Map* map, Player* /*player*/) {
-		if (dungeons.find(map->GetId()) == dungeons.end())
-		{		
-			return SolocraftDungeonLevel; //map not found returns the catch all value    
-		}
-		else
-			return dungeons[map->GetId()]; //return the specific dungeon's level         
-	}
+        if (dungeons.find(map->GetId()) == dungeons.end())
+        {
+            return SolocraftDungeonLevel; //map not found returns the catch all value    
+        }
+        else
+            return dungeons[map->GetId()]; //return the specific dungeon's level         
+    }
 
     // Get the group's size
     int GetNumInGroup(Player* player) {
         int numInGroup = 1;
-        Group *group = player->GetGroup();
+        Group* group = player->GetGroup();
         if (group) {
             Group::MemberSlotList const& groupMembers = group->GetMemberSlots();
             numInGroup = groupMembers.size();
-		}
+        }
         return numInGroup;
     }
 
-	// Get the Player's class balance debuff
-	int GetClassBalance(Player* player) {
-		int classBalance = 100;
+    // Get the Player's class balance debuff
+    int GetClassBalance(Player* player) {
+        int classBalance = 100;
 
-		if(classes.find(player->getClass()) == classes.end()){
-			return classBalance; //class not found returns the catch all value
-		}
-		else if (classes[player->getClass()] >= 0 && classes[player->getClass()] <= 100) {
-			return classes[player->getClass()]; //return the specific class's Balance value
-		}
-		else
-			return classBalance; //class balance value invalid returns the catch all value
-	}
+        if (classes.find(player->getClass()) == classes.end()) {
+            return classBalance; //class not found returns the catch all value
+        }
+        else if (classes[player->getClass()] >= 0 && classes[player->getClass()] <= 100) {
+            return classes[player->getClass()]; //return the specific class's Balance value
+        }
+        else
+            return classBalance; //class balance value invalid returns the catch all value
+    }
 
     // Apply the player buffs
     void ApplyBuffs(Player* player, Map* map, float difficulty, int dunLevel, int numInGroup, int classBalance)
     {
-	    //Check whether to buff the player or check to debuff back to normal
-	    if (difficulty != 0)
-	    {
-			std::ostringstream ss;
-			
-			int SpellPowerBonus = 0;
-			
-			//Check for an existing No XP Gain flag - other mod compatibility 
-			if (player->HasFlag(PLAYER_FLAGS, PLAYER_FLAGS_NO_XP_GAIN))
-			{			
-				SolocraftNoXPFlag = 1;
-			}
+        //Check whether to buff the player or check to debuff back to normal
+        if (difficulty != 0)
+        {
+            std::ostringstream ss;
 
-			if (player->getLevel() <= dunLevel + SolocraftLevelDiff) //If a player is too high level for dungeon don't buff but if in a group will count towards the group offset balancing.
-			{
+            int SpellPowerBonus = 0;
 
-				//Get Current members total difficulty offset and if it exceeds the difficulty offset of the dungeon then debuff new group members coming in until all members leave and re-enter. This happens when a player already inside dungeon invite others to the group but the player already has the full difficulty offset.
-				float GroupDifficulty = GetGroupDifficulty(player);
-				
-				//Check to either debuff or buff player entering dungeon.  Debuff must be enabled in Config
-				if (GroupDifficulty >= difficulty && SoloCraftDebuffEnable == 1)
-				{
-					//Current dungeon offset exceeded - Debuff player modified by ClassBalance Adjustment
-					difficulty = (-abs(difficulty)) + ((((float)classBalance / 100) * difficulty) / numInGroup);
-					difficulty = roundf(difficulty * 100) / 100; //Float variables suck
-					
-					//Disable player XP gain if debuff applied
-					if (!player->HasFlag(PLAYER_FLAGS, PLAYER_FLAGS_NO_XP_GAIN) && SolocraftXPBalEnabled)
-					{	
-						player->SetFlag(PLAYER_FLAGS, PLAYER_FLAGS_NO_XP_GAIN);
-					}
-					
-					//LOG_INFO("server.loading", "Group Difficulty %f", GroupDifficulty ); //New Logging system
-				}
-				else
-				{
-					//Current Dungeon offset not exceeded - Buff player
-					//Group difficulty and ClassBalance Adjustment
-					difficulty = (((float)classBalance / 100) * difficulty) / numInGroup;
-					difficulty = roundf(difficulty * 100) / 100; //Float variables suck - two decimal rounding
+            //Check for an existing No XP Gain flag - other mod compatibility 
+            if (player->HasFlag(PLAYER_FLAGS, PLAYER_FLAGS_NO_XP_GAIN))
+            {
+                SolocraftNoXPFlag = 1;
+            }
 
-					//Set XP Modifier
-					SoloCraftXPMod = (1.04 / difficulty) - 0.02; 
-					SoloCraftXPMod = roundf(SoloCraftXPMod * 100) / 100;
-					
-					//Check for negative XP modifier - Disable XP Gain
-					if (SoloCraftXPMod < 0)
-					{
-						SoloCraftXPMod = 0;
-						if (!player->HasFlag(PLAYER_FLAGS, PLAYER_FLAGS_NO_XP_GAIN) && SolocraftXPBalEnabled)
-						{	
-							player->SetFlag(PLAYER_FLAGS, PLAYER_FLAGS_NO_XP_GAIN);
-						}
-					}
+            if (player->getLevel() <= dunLevel + SolocraftLevelDiff) //If a player is too high level for dungeon don't buff but if in a group will count towards the group offset balancing.
+            {
 
-					//Check XP modifier for over max limit and adjust
-					if (SoloCraftXPMod > 1)
-					{
-						SoloCraftXPMod = 1.0;
-					}					
+                //Get Current members total difficulty offset and if it exceeds the difficulty offset of the dungeon then debuff new group members coming in until all members leave and re-enter. This happens when a player already inside dungeon invite others to the group but the player already has the full difficulty offset.
+                float GroupDifficulty = GetGroupDifficulty(player);
+                //Check to either debuff or buff player entering dungeon.  Debuff must be enabled in Config
+                if (GroupDifficulty >= difficulty && SoloCraftDebuffEnable == 1)
+                {
+                    //Current dungeon offset exceeded - Debuff player modified by ClassBalance Adjustment
+                    difficulty = (-abs(difficulty)) + ((((float)classBalance / 100) * difficulty) / numInGroup);
+                    difficulty = roundf(difficulty * 100) / 100; //Float variables suck
 
-					//LOG_INFO("server.loading", "Difficulty %f", difficulty ); //New Logging System
+                    //Disable player XP gain if debuff applied
+                    if (!player->HasFlag(PLAYER_FLAGS, PLAYER_FLAGS_NO_XP_GAIN) && SolocraftXPBalEnabled)
+                    {
+                        player->SetFlag(PLAYER_FLAGS, PLAYER_FLAGS_NO_XP_GAIN);
+                    }
 
-				}
+                    //LOG_INFO("server.loading", "Group Difficulty %f", GroupDifficulty ); //New Logging system
+                }
+                else
+                {
+                    //Current Dungeon offset not exceeded - Buff player
+                    //Group difficulty and ClassBalance Adjustment
+                    difficulty = (((float)classBalance / 100) * difficulty) / numInGroup;
+                    difficulty = roundf(difficulty * 100) / 100; //Float variables suck - two decimal rounding
 
-				//Check Database for a current dungeon entry
-				QueryResult result = CharacterDatabase.Query("SELECT `GUID`, `Difficulty`, `GroupSize`, `SpellPower`, `Stats` FROM `custom_solocraft_character_stats` WHERE GUID = {}", player->GetGUID().GetCounter());
+                    //Set XP Modifier
+                    SoloCraftXPMod = (1.04 / difficulty) - 0.02;
+                    SoloCraftXPMod = roundf(SoloCraftXPMod * 100) / 100;
 
-				//Modify Player Stats
-				for (int32 i = STAT_STRENGTH; i < MAX_STATS; ++i) //STATS defined/enum in SharedDefines.h
-				{
-					//Check for Dungeon to Dungeon Transfer and remove old buff
-					if (result)
-					{
-						player->HandleStatModifier(UnitMods(UNIT_MOD_STAT_START + i), TOTAL_PCT, (*result)[1].Get<float>() * (*result)[4].Get<float>(), false);
-					}
-					// Buff the player
-					player->HandleStatModifier(UnitMods(UNIT_MOD_STAT_START + i), TOTAL_PCT, difficulty * SoloCraftStatsMult, true); //Unitmods enum UNIT_MOD_STAT_START defined in Unit.h line 391
+                    //Check for negative XP modifier - Disable XP Gain
+                    if (SoloCraftXPMod < 0)
+                    {
+                        SoloCraftXPMod = 0;
+                        if (!player->HasFlag(PLAYER_FLAGS, PLAYER_FLAGS_NO_XP_GAIN) && SolocraftXPBalEnabled)
+                        {
+                            player->SetFlag(PLAYER_FLAGS, PLAYER_FLAGS_NO_XP_GAIN);
+                        }
+                    }
 
-				}
+                    //Check XP modifier for over max limit and adjust
+                    if (SoloCraftXPMod > 1)
+                    {
+                        SoloCraftXPMod = 1.0;
+                    }
 
-				// Set player health
-				player->SetFullHealth();//defined in Unit.h line 1524
+                    //LOG_INFO("server.loading", "Difficulty %f", difficulty ); //New Logging System
 
-				// Set Pet Health
-				player->CastSpell(player, 6962, true);
+                }
 
-				//Spellcaster Stat modify
-				if (player->getPowerType() == POWER_MANA || player->getClass() == 11) //Fixes Druid entering dungeon in Bear or Cat form
-				{
-					// Buff the player's mana
-					player->SetPower(POWER_MANA, player->GetMaxPower(POWER_MANA));
+                //Check Database for a current dungeon entry
+                QueryResult result = CharacterDatabase.Query("SELECT `GUID`, `Difficulty`, `GroupSize`, `SpellPower`, `Stats` FROM `custom_solocraft_character_stats` WHERE GUID = {}", player->GetGUID().GetCounter());
 
-					//Check for Dungeon to Dungeon Transfer and remove old Spellpower buff
-					if (result)
-					{
-						// remove spellpower bonus
-						player->ApplySpellPowerBonus((*result)[3].Get<uint32>() * (*result)[4].Get<float>(),false);
-					}
+                //Modify Player Stats
+                for (int32 i = STAT_STRENGTH; i < MAX_STATS; ++i) //STATS defined/enum in SharedDefines.h
+                {
+                    //Check for Dungeon to Dungeon Transfer and remove old buff
+                    if (result)
+                    {
+                        player->HandleStatModifier(UnitMods(UNIT_MOD_STAT_START + i), TOTAL_PCT, (*result)[1].Get<float>() * (*result)[4].Get<float>(), false);
+                    }
+                    // Buff the player
+                    player->HandleStatModifier(UnitMods(UNIT_MOD_STAT_START + i), TOTAL_PCT, difficulty * SoloCraftStatsMult, true); //Unitmods enum UNIT_MOD_STAT_START defined in Unit.h line 391
 
-					//Buff Spellpower
-					if (difficulty > 0) //Debuffed characters do not get spellpower
-					{
-						SpellPowerBonus = static_cast<int>((player->getLevel() * SoloCraftSpellMult) * difficulty);//Yes, I pulled this calc out of my butt.
-						player->ApplySpellPowerBonus(SpellPowerBonus,true);
-					}	
-				}
+                }
 
-				//XP Gain Disabled
-				if (!SolocraftXPEnabled)
-				{
-					SoloCraftXPMod = 0;
-					if (!player->HasFlag(PLAYER_FLAGS, PLAYER_FLAGS_NO_XP_GAIN))
-					{	
-						player->SetFlag(PLAYER_FLAGS, PLAYER_FLAGS_NO_XP_GAIN);
-					}					
-				}				
+                // Set player health
+                player->SetFullHealth();//defined in Unit.h line 1524
 
-				////Announcements
-				if (difficulty > 0)
-				{
-					// Announce to player - Buff
-					if (!SolocraftXPEnabled)
-					{
-						ss << "|cffFF0000[SoloCraft] |cffFF8000" << player->GetName() << " entered %s  - Difficulty Offset: %0.2f. Spellpower Bonus: %i. Class Balance Weight: %i.  XP Gain: |cffFF0000Disabled";
-						ChatHandler(player->GetSession()).PSendSysMessage(ss.str().c_str(), map->GetMapName(), difficulty, SpellPowerBonus, classBalance);						
-					}
-					else
-					{
-						if (!SolocraftXPBalEnabled)
-						{
-							ss << "|cffFF0000[SoloCraft] |cffFF8000" << player->GetName() << " entered %s  - Difficulty Offset: %0.2f. Spellpower Bonus: %i. Class Balance Weight: %i.  XP Balancing: |cffFF0000Disabled";
-							ChatHandler(player->GetSession()).PSendSysMessage(ss.str().c_str(), map->GetMapName(), difficulty, SpellPowerBonus, classBalance);
-						}
-						else
-						{
-							ss << "|cffFF0000[SoloCraft] |cffFF8000" << player->GetName() << " entered %s  - Difficulty Offset: %0.2f. Spellpower Bonus: %i. Class Balance Weight: %i.  XP Balancing: |cff4CFF00Enabled";
-							ChatHandler(player->GetSession()).PSendSysMessage(ss.str().c_str(), map->GetMapName(), difficulty, SpellPowerBonus, classBalance);
-						}
-					}
-				}
-				else
-				{
-					// Announce to player - Debuff
-					if (!SolocraftXPBalEnabled && SolocraftXPEnabled)
-					{
-						ss << "|cffFF0000[SoloCraft] |cffFF8000" << player->GetName() << " entered %s  - |cffFF0000BE ADVISED - You have been debuffed by offset: %0.2f with a Class Balance Weight: %i. |cffFF8000 A group member already inside has the dungeon's full buff offset.  No Spellpower buff will be applied to spell casters.  ALL group members must exit the dungeon and re-enter to receive a balanced offset.";
-						ChatHandler(player->GetSession()).PSendSysMessage(ss.str().c_str(), map->GetMapName(), difficulty, classBalance);
-					}
-					else
-					{
-						ss << "|cffFF0000[SoloCraft] |cffFF8000" << player->GetName() << " entered %s  - |cffFF0000BE ADVISED - You have been debuffed by offset: %0.2f with a Class Balance Weight: %i and no XP will be awarded. |cffFF8000 A group member already inside has the dungeon's full buff offset.  No Spellpower buff will be applied to spell casters.  ALL group members must exit the dungeon and re-enter to receive a balanced offset.";
-						ChatHandler(player->GetSession()).PSendSysMessage(ss.str().c_str(), map->GetMapName(), difficulty, classBalance);
-					}
-				}
+                // Set Pet Health
+                player->CastSpell(player, 6962, true);
 
-				// Save Player Dungeon Offsets to Database
-				CharacterDatabase.Execute("REPLACE INTO custom_solocraft_character_stats (GUID, Difficulty, GroupSize, SpellPower, Stats) VALUES ({}, {}, {}, {}, {})", player->GetGUID().GetCounter(), difficulty, numInGroup, SpellPowerBonus, SoloCraftStatsMult);
-			}
-			else
-			{
-				// Announce to player - Over Max Level Threshold
-				ss << "|cffFF0000[SoloCraft] |cffFF8000" << player->GetName() << " entered %s  - |cffFF0000You have not been buffed. |cffFF8000 Your level is higher than the max level (%i) threshold for this dungeon.";
-				ChatHandler(player->GetSession()).PSendSysMessage(ss.str().c_str(), map->GetMapName(), dunLevel + SolocraftLevelDiff);	
-				ClearBuffs(player, map); //Check to revert player back to normal
-			}
-		}
-		else
-		{
-			ClearBuffs(player, map); //Check to revert player back to normal - Moving this here fixed logout and login while in instance buff and debuff issues
-		}
-	}
+                //Spellcaster Stat modify
+                if (player->getPowerType() == POWER_MANA || player->getClass() == 11) //Fixes Druid entering dungeon in Bear or Cat form
+                {
+                    // Buff the player's mana
+                    player->SetPower(POWER_MANA, player->GetMaxPower(POWER_MANA));
+
+                    //Check for Dungeon to Dungeon Transfer and remove old Spellpower buff
+                    if (result)
+                    {
+                        // remove spellpower bonus
+                        player->ApplySpellPowerBonus((*result)[3].Get<uint32>() * (*result)[4].Get<float>(), false);
+                    }
+
+                    //Buff Spellpower
+                    if (difficulty > 0) //Debuffed characters do not get spellpower
+                    {
+                        SpellPowerBonus = static_cast<int>((player->getLevel() * SoloCraftSpellMult) * difficulty);//Yes, I pulled this calc out of my butt.
+                        player->ApplySpellPowerBonus(SpellPowerBonus, true);
+                    }
+                }
+
+                //XP Gain Disabled
+                if (!SolocraftXPEnabled)
+                {
+                    SoloCraftXPMod = 0;
+                    if (!player->HasFlag(PLAYER_FLAGS, PLAYER_FLAGS_NO_XP_GAIN))
+                    {
+                        player->SetFlag(PLAYER_FLAGS, PLAYER_FLAGS_NO_XP_GAIN);
+                    }
+                }
+
+                ////Announcements
+                if (difficulty > 0)
+                {
+                    // Announce to player - Buff
+                    if (!SolocraftXPEnabled)
+                    {
+                        ss << "|cffFF0000[SoloCraft] |cffFF8000" << player->GetName() << " entered %s  - Difficulty Offset: %0.2f. Spellpower Bonus: %i. Class Balance Weight: %i.  XP Gain: |cffFF0000Disabled";
+                        ChatHandler(player->GetSession()).PSendSysMessage(ss.str().c_str(), map->GetMapName(), difficulty, SpellPowerBonus, classBalance);
+                    }
+                    else
+                    {
+                        if (!SolocraftXPBalEnabled)
+                        {
+                            ss << "|cffFF0000[SoloCraft] |cffFF8000" << player->GetName() << " entered %s  - Difficulty Offset: %0.2f. Spellpower Bonus: %i. Class Balance Weight: %i.  XP Balancing: |cffFF0000Disabled";
+                            ChatHandler(player->GetSession()).PSendSysMessage(ss.str().c_str(), map->GetMapName(), difficulty, SpellPowerBonus, classBalance);
+                        }
+                        else
+                        {
+                            ss << "|cffFF0000[SoloCraft] |cffFF8000" << player->GetName() << " entered %s  - Difficulty Offset: %0.2f. Spellpower Bonus: %i. Class Balance Weight: %i.  XP Balancing: |cff4CFF00Enabled";
+                            ChatHandler(player->GetSession()).PSendSysMessage(ss.str().c_str(), map->GetMapName(), difficulty, SpellPowerBonus, classBalance);
+                        }
+                    }
+                }
+                else
+                {
+                    // Announce to player - Debuff
+                    if (!SolocraftXPBalEnabled && SolocraftXPEnabled)
+                    {
+                        ss << "|cffFF0000[SoloCraft] |cffFF8000" << player->GetName() << " entered %s  - |cffFF0000BE ADVISED - You have been debuffed by offset: %0.2f with a Class Balance Weight: %i. |cffFF8000 A group member already inside has the dungeon's full buff offset.  No Spellpower buff will be applied to spell casters.  ALL group members must exit the dungeon and re-enter to receive a balanced offset.";
+                        ChatHandler(player->GetSession()).PSendSysMessage(ss.str().c_str(), map->GetMapName(), difficulty, classBalance);
+                    }
+                    else
+                    {
+                        ss << "|cffFF0000[SoloCraft] |cffFF8000" << player->GetName() << " entered %s  - |cffFF0000BE ADVISED - You have been debuffed by offset: %0.2f with a Class Balance Weight: %i and no XP will be awarded. |cffFF8000 A group member already inside has the dungeon's full buff offset.  No Spellpower buff will be applied to spell casters.  ALL group members must exit the dungeon and re-enter to receive a balanced offset.";
+                        ChatHandler(player->GetSession()).PSendSysMessage(ss.str().c_str(), map->GetMapName(), difficulty, classBalance);
+                    }
+                }
+
+                // Save Player Dungeon Offsets to Database
+                CharacterDatabase.Execute("REPLACE INTO custom_solocraft_character_stats (GUID, Difficulty, GroupSize, SpellPower, Stats) VALUES ({}, {}, {}, {}, {})", player->GetGUID().GetCounter(), difficulty, numInGroup, SpellPowerBonus, SoloCraftStatsMult);
+            }
+            else
+            {
+                // Announce to player - Over Max Level Threshold
+                ss << "|cffFF0000[SoloCraft] |cffFF8000" << player->GetName() << " entered %s  - |cffFF0000You have not been buffed. |cffFF8000 Your level is higher than the max level (%i) threshold for this dungeon.";
+                ChatHandler(player->GetSession()).PSendSysMessage(ss.str().c_str(), map->GetMapName(), dunLevel + SolocraftLevelDiff);
+                ClearBuffs(player, map); //Check to revert player back to normal
+            }
+        }
+        else
+        {
+            ClearBuffs(player, map); //Check to revert player back to normal - Moving this here fixed logout and login while in instance buff and debuff issues
+        }
+    }
 
     // Get the current group members GUIDS and return the total sum of the difficulty offset by all group members currently in the dungeon
     float GetGroupDifficulty(Player* player) {
         float GroupDifficulty = 0.0;
-        Group *group = player->GetGroup();
+        Group* group = player->GetGroup();
         if (group)
-		{
+        {
             Group::MemberSlotList const& groupMembers = group->GetMemberSlots();
-			for (Group::member_citerator itr = groupMembers.begin(); itr != groupMembers.end(); ++itr)
-			{
-				//Exclude player from the tally because the player is the one entering the dungeon
-				if (itr->guid != player->GetGUID())
-				{
-					//Database query to find difficulty for each group member that is currently in an instance
-					QueryResult result = CharacterDatabase.Query("SELECT `GUID`, `Difficulty`, `GroupSize` FROM `custom_solocraft_character_stats` WHERE GUID = {}", itr->guid.GetCounter());
+            for (Group::member_citerator itr = groupMembers.begin(); itr != groupMembers.end(); ++itr)
+            {
+                //Exclude player from the tally because the player is the one entering the dungeon
+                if (itr->guid != player->GetGUID())
+                {
+                    //Database query to find difficulty for each group member that is currently in an instance
+                    QueryResult result = CharacterDatabase.Query("SELECT `GUID`, `Difficulty`, `GroupSize` FROM `custom_solocraft_character_stats` WHERE GUID = {}", itr->guid.GetCounter());
 
-					if (result)
-					{
-						//Test for debuffs already give to other members - They cannot be used to determine the total offset because negative numbers will skew the total difficulty offset 
-						if ((*result)[1].Get<float>() > 0)
-						{
-							GroupDifficulty = GroupDifficulty + (*result)[1].Get<float>();
-						}
-					}
-				}
-			}
-		}
+                    if (result)
+                    {
+                        //Test for debuffs already give to other members - They cannot be used to determine the total offset because negative numbers will skew the total difficulty offset 
+                        if ((*result)[1].Get<float>() > 0)
+                        {
+                            GroupDifficulty = GroupDifficulty + (*result)[1].Get<float>();
+                        }
+                    }
+                }
+            }
+        }
         return GroupDifficulty;
     }
 
     void ClearBuffs(Player* player, Map* map)
     {
 
-		//Database query to get offset from the last instance player exited
-		QueryResult result = CharacterDatabase.Query("SELECT `GUID`, `Difficulty`, `GroupSize`, `SpellPower`, `Stats` FROM `custom_solocraft_character_stats` WHERE GUID = {}", player->GetGUID().GetCounter());
-		if (result)
-		{
-			float difficulty = (*result)[1].Get<float>();
-			int SpellPowerBonus = (*result)[3].Get<uint32>();
+        //Database query to get offset from the last instance player exited
+        QueryResult result = CharacterDatabase.Query("SELECT `GUID`, `Difficulty`, `GroupSize`, `SpellPower`, `Stats` FROM `custom_solocraft_character_stats` WHERE GUID = {}", player->GetGUID().GetCounter());
+        if (result)
+        {
+            float difficulty = (*result)[1].Get<float>();
+            int SpellPowerBonus = (*result)[3].Get<uint32>();
 
-			float StatsMultPct = (*result)[4].Get<float>();
-			SoloCraftXPMod = 1.0;
+            float StatsMultPct = (*result)[4].Get<float>();
+            SoloCraftXPMod = 1.0;
 
             // Inform the player
    //         std::ostringstream ss;
-			//ss << "|cffFF0000[SoloCraft] |cffFF8000" << player->GetName() << " exited to %s - Reverting Difficulty Offset: %0.2f. Spellpower Bonus Removed: %i";
+            //ss << "|cffFF0000[SoloCraft] |cffFF8000" << player->GetName() << " exited to %s - Reverting Difficulty Offset: %0.2f. Spellpower Bonus Removed: %i";
    //         ChatHandler(player->GetSession()).PSendSysMessage(ss.str().c_str(), map->GetMapName(), difficulty, SpellPowerBonus);
 
             // Clear the buffs
@@ -724,23 +724,33 @@ private:
                 player->HandleStatModifier(UnitMods(UNIT_MOD_STAT_START + i), TOTAL_PCT, difficulty * StatsMultPct, false);
             }
             if (player->getPowerType() == POWER_MANA && difficulty > 0)
-			{
+            {
                 // remove spellpower bonus
-				player->ApplySpellPowerBonus(SpellPowerBonus,false);
-				//sLog->outError("%u: spellpower Bonus removed: %i", player->GetGUID(), SpellPowerBonus);
-			}
-			if (player->HasFlag(PLAYER_FLAGS, PLAYER_FLAGS_NO_XP_GAIN) && !SolocraftNoXPFlag)
-			{
-				player->RemoveFlag(PLAYER_FLAGS, PLAYER_FLAGS_NO_XP_GAIN);
-			}
+                player->ApplySpellPowerBonus(SpellPowerBonus, false);
+                //sLog->outError("%u: spellpower Bonus removed: %i", player->GetGUID(), SpellPowerBonus);
+            }
+            if (player->HasFlag(PLAYER_FLAGS, PLAYER_FLAGS_NO_XP_GAIN) && !SolocraftNoXPFlag)
+            {
+                player->RemoveFlag(PLAYER_FLAGS, PLAYER_FLAGS_NO_XP_GAIN);
+            }
 
-			//Reinit Existing No XP Gain flag check
-			SolocraftNoXPFlag = 0;
+            //Reinit Existing No XP Gain flag check
+            SolocraftNoXPFlag = 0;
 
-			//Remove database entry as the player is no longer in an instance
-			CharacterDatabase.Execute("DELETE FROM custom_solocraft_character_stats WHERE GUID = {}", player->GetGUID().GetCounter());
-		}
+            //Remove database entry as the player is no longer in an instance
+            CharacterDatabase.Execute("DELETE FROM custom_solocraft_character_stats WHERE GUID = {}", player->GetGUID().GetCounter());
+        }
     }
+
+    bool IsActive()
+    {
+        time_t curr = time(nullptr);
+        tm localTm;
+        localtime_r(&curr, &localTm);
+        if (localTm.tm_wday == 5 || localTm.tm_wday == 6 || localTm.tm_wday == 0)
+            return true;
+    }
+
 };
 
 void AddSolocraftScripts()
